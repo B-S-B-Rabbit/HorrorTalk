@@ -13,6 +13,7 @@
         </CInputMain>
         <CInputMain
           v-model="value"
+          type="password"
           class="registration-form_input-text"
           hint="Больше 5 символов"
           :rules="validateLogin"
@@ -27,6 +28,23 @@
           placeholder="Введите логин"
         >
         </CInputMain>
+        <CInputMain
+          v-model="value"
+          class="registration-form_input-text"
+          hint="Больше 5 символов"
+          :rules="validateLogin"
+          placeholder="Введите логин"
+        >
+        </CInputMain>
+        <div class="date-container">
+          <div class="date-label">Дата рождения</div>
+          <HTInputDate
+            v-model="dateOfBirth"
+            class="registration-form_input-date"
+          >
+          </HTInputDate>
+        </div>
+
         <div class="radio-container">
           <div class="radio-label">Пол</div>
           <HTRadioButtons
@@ -37,16 +55,11 @@
             :options="options"
           />
         </div>
-        <CInputMain
-          v-model="value"
-          type="password"
-          class="registration-form_input-text"
-          hint="Больше 5 символов"
-          :rules="validateLogin"
-          placeholder="Введите логин"
-        >
-        </CInputMain>
       </q-form>
+      <div class="confirm-reg-block">
+        Регистрируясь, вы соглашаетесь с Правилами использования и Политикой
+        конфиденциальности
+      </div>
     </div>
   </div>
 </template>
@@ -56,7 +69,9 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import CInputMain from "~/components/inputs/CInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
-const value: object = ref("");
+import HTInputDate from "~/components/inputs/HTInputDate.vue";
+const value: Ref<string> = ref("");
+const dateOfBirth: Ref<string> = ref("");
 interface ValidationRule {
   rule: (value: string) => boolean;
   ruleMessage: string;
@@ -92,11 +107,17 @@ body,
 #__nuxt {
   width: 100vw;
   height: 100vh;
+  box-sizing: border-box;
 }
 .main-container {
   background: #000000;
   width: 100%;
   height: 100%;
+  .confirm-reg-block {
+    margin: 31px 0px 11px 0px;
+    color: gray;
+    text-align: center;
+  }
   &_logo {
     height: 150px;
     background: rgb(91, 0, 0);
@@ -106,6 +127,9 @@ body,
     .registration-form {
       &_input-text {
         margin-bottom: 10px;
+      }
+      &_input-date {
+        width: 55%;
       }
       .radio-container {
         display: flex;
@@ -119,6 +143,17 @@ body,
         }
         .radio-buttons {
           color: white;
+        }
+      }
+      .date-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 15px;
+        .date-label {
+          color: rgb(156, 156, 156);
+          font-size: 14px;
         }
       }
     }

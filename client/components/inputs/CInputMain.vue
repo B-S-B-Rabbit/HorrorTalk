@@ -7,7 +7,7 @@
     bg-white
     borderless
     :style="`height: ${(hint || fieldHasError) && active ? '60px' : '54px'}; 
-      ${active ? `border: 2px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}`"
+      ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}`"
     :hint="hint"
     :rules="[(val: string) => checkRules(val)]"
     no-error-icon
@@ -32,12 +32,13 @@
   >
     <template #append>
       <q-icon
-        v-if="active"
+        v-if="active && textValidityCheck"
         :size="'12px'"
         class="validity-icon"
         :name="mdiCircle"
         :color="`${fieldHasError ? 'negative' : 'positive'}`"
       ></q-icon>
+      <slot name="appendIcon"></slot>
     </template>
   </q-input>
 </template>
@@ -51,6 +52,10 @@ const props = defineProps({
   modelValue: {
     type: String,
     default: "",
+  },
+  textValidityCheck: {
+    type: Boolean,
+    default: true,
   },
   hint: {
     type: String,
@@ -98,6 +103,7 @@ function updateVal(value: string) {
 }
 .text-input {
   overflow: hidden;
+  transition: all 0.2s ease;
   padding-left: 20px;
   font-size: 16px;
   border-radius: 16px;
