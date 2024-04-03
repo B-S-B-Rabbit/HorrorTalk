@@ -1,39 +1,22 @@
 <template>
   <div class="main-container">
-    <div class="main-container_logo"></div>
+    <div class="main-container_logo">
+      <img
+        class="main-container_logo-img"
+        src="public/icons/logo.svg"
+        alt="Logo"
+      />
+    </div>
     <div class="registration-container">
       <q-form class="registration-form">
         <CInputMain
-          v-model="value"
+          v-for="(item, index) in formLabels.slice(0, 3)"
+          :key="index"
+          v-model="item.value"
           class="registration-form_input-text"
-          hint="Больше 5 символов"
-          :rules="validateLogin"
-          placeholder="Введите логин"
-        >
-        </CInputMain>
-        <CInputMain
-          v-model="value"
-          type="password"
-          class="registration-form_input-text"
-          hint="Больше 5 символов"
-          :rules="validateLogin"
-          placeholder="Введите логин"
-        >
-        </CInputMain>
-        <CInputMain
-          v-model="value"
-          class="registration-form_input-text"
-          hint="Больше 5 символов"
-          :rules="validateLogin"
-          placeholder="Введите логин"
-        >
-        </CInputMain>
-        <CInputMain
-          v-model="value"
-          class="registration-form_input-text"
-          hint="Больше 5 символов"
-          :rules="validateLogin"
-          placeholder="Введите логин"
+          :hint="item.hint"
+          :rules="item.validate"
+          :label="item.label"
         >
         </CInputMain>
         <div class="date-container">
@@ -55,10 +38,26 @@
             :options="options"
           />
         </div>
+        <CInputMain
+          v-model="formLabels[3].value"
+          type="password"
+          class="registration-form_input-text"
+          :label="formLabels[3].label"
+          :hint="formLabels[3].hint"
+          :rules="formLabels[3].validate"
+        >
+        </CInputMain>
       </q-form>
+    </div>
+    <div class="register-block">
       <div class="confirm-reg-block">
-        Регистрируясь, вы соглашаетесь с Правилами использования и Политикой
-        конфиденциальности
+        Регистрируясь, вы соглашаетесь с
+        <a class="link">Правилами использования</a> и
+        <a class="link">Политикой конфиденциальности</a>
+      </div>
+      <HTButton class="registration-button" label="Зарегистрироваться" />
+      <div class="confirm-reg-block">
+        Уже есть аккаунт? <span class="link">Войти</span>
       </div>
     </div>
   </div>
@@ -70,6 +69,7 @@ import type { Ref } from "vue";
 import CInputMain from "~/components/inputs/CInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
+import HTButton from "~/components/HTButton.vue";
 const value: Ref<string> = ref("");
 const dateOfBirth: Ref<string> = ref("");
 interface ValidationRule {
@@ -80,6 +80,37 @@ interface Option {
   label: string;
   value: string;
 }
+interface FormLabel {
+  label: string;
+  value: string;
+}
+
+const validateLogin: ValidationRule[] = [
+  {
+    rule: (value: string) => value.length > 5,
+    ruleMessage: "Меньше 5 символов!",
+  },
+];
+const formLabels: Ref<FormLabel[]> = ref([
+  {
+    label: "Логин",
+    value: "",
+    validate: validateLogin,
+    hint: "Больше 5 символов",
+  },
+  {
+    label: "Почта",
+    value: "",
+  },
+  {
+    label: "Имя",
+    value: "",
+  },
+  {
+    label: "Пароль",
+    value: "",
+  },
+]);
 
 const options: Option[] = [
   {
@@ -92,14 +123,6 @@ const options: Option[] = [
   },
 ];
 const selectedGender: Ref<string> = ref("");
-
-const validateLogin: ValidationRule[] = [
-  {
-    rule: (value: string) => value.length > 5,
-    ruleMessage: "Меньше 5 символов!",
-  },
-  // Другие правила валидации могут быть добавлены здесь
-];
 </script>
 <style lang="scss">
 html,
@@ -108,28 +131,48 @@ body,
   width: 100vw;
   height: 100vh;
   box-sizing: border-box;
+  background: #000000;
+}
+.link {
+  color: #4874a9;
 }
 .main-container {
-  background: #000000;
   width: 100%;
   height: 100%;
+  padding: 0 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .registration-button {
+    margin: 24px 0px;
+  }
   .confirm-reg-block {
-    margin: 31px 0px 11px 0px;
     color: gray;
     text-align: center;
   }
   &_logo {
     height: 150px;
-    background: rgb(91, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-top: 32px;
   }
   .registration-container {
-    margin: 0 14%;
+    margin: 0 calc(14% - 5%);
+    display: flex;
+    flex-direction: column;
     .registration-form {
       &_input-text {
-        margin-bottom: 10px;
+        margin-bottom: 16px;
+        &:last-child {
+          margin-bottom: 32px;
+        }
       }
       &_input-date {
         width: 55%;
+        margin-bottom: 7px;
       }
       .radio-container {
         display: flex;
@@ -137,6 +180,7 @@ body,
         justify-content: space-between;
         align-items: center;
         padding-left: 15px;
+        margin-bottom: 13px;
         .radio-label {
           color: rgb(156, 156, 156);
           font-size: 14px;
@@ -158,8 +202,5 @@ body,
       }
     }
   }
-}
-.q-field__label {
-  margin-left: 14px;
 }
 </style>

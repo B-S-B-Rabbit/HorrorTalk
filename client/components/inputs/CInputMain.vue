@@ -5,6 +5,7 @@
     class="text-input"
     :placeholder="placeholder"
     bg-white
+    :label="label"
     borderless
     :style="`height: ${(hint || fieldHasError) && active ? '60px' : '54px'}; 
       ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}`"
@@ -64,6 +65,10 @@ const props = defineProps({
   rules: {
     type: Array as () => Rule[],
     default: () => [],
+  },
+  label: {
+    type: String,
+    default: undefined,
   },
   placeholder: {
     type: String,
