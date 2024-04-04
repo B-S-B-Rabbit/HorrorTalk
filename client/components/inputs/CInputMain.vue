@@ -6,6 +6,7 @@
     :placeholder="placeholder"
     bg-white
     :label="label"
+    :type="isPwd ? 'password' : type == 'password' ? 'text' : type"
     borderless
     :style="`height: ${(hint || fieldHasError) && active ? '60px' : '54px'}; 
       ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}`"
@@ -33,19 +34,30 @@
   >
     <template #append>
       <q-icon
-        v-if="active && textValidityCheck"
+        v-if="type != 'password' && active && textValidityCheck"
         :size="'12px'"
         class="validity-icon"
         :name="mdiCircle"
         :color="`${fieldHasError ? 'negative' : 'positive'}`"
       ></q-icon>
+      <q-icon
+        v-else-if="type == 'password'"
+        :name="isPwd ? mdiEyeOffOutline : mdiEyeOutline"
+        class="cursor-pointer"
+        style="margin: 16px; color: var(--app-black-2)"
+        @click="isPwd = !isPwd"
+      />
       <slot name="appendIcon"></slot>
     </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { mdiCircle } from "@quasar/extras/mdi-v6";
+import {
+  mdiCircle,
+  mdiEyeOffOutline,
+  mdiEyeOutline,
+} from "@quasar/extras/mdi-v6";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import { QInput } from "quasar";
@@ -74,11 +86,16 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  type: {
+    type: String,
+    default: "text",
+  },
 });
 interface Rule {
   rule: (value: string) => boolean;
   ruleMessage: string;
 }
+const isPwd: Ref<boolean> = ref(props.type == "password");
 const inputRef: Ref<InstanceType<typeof QInput> | null> = ref(null);
 const emit = defineEmits(["update:modelValue"]);
 const fieldHasError: Ref<boolean> = ref(false);
@@ -112,6 +129,6 @@ function updateVal(value: string) {
   padding-left: 20px;
   font-size: 16px;
   border-radius: 16px;
-  background-color: white;
+  background-color: var(--app-white-1);
 }
 </style>

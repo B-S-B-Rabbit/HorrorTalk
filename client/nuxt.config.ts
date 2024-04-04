@@ -1,7 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@pinia/nuxt", "nuxt-quasar-ui"],
+  modules: ["@pinia/nuxt", "nuxt-quasar-ui", "@nuxtjs/google-fonts"],
+  css: [`/public/assets/colors.scss`],
+  googleFonts: {
+    families: {
+      Inter: true, // Это добавит шрифт Inter
+    },
+  },
   quasar: {
     config: {
       brand: {

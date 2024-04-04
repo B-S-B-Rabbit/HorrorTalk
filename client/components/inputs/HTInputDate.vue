@@ -9,14 +9,17 @@
     @update:model-value="updateDate"
   >
     <template #appendIcon>
-      <q-icon style="left: -12px; color: #4c4b4b" :name="mdiCalendarMonth">
+      <q-icon
+        style="left: -12px; color: #4c4b4b"
+        :name="mdiCalendarMonthOutline"
+      >
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
           <q-date
             mask="DD.MM.YYYY"
             :model-value="modelValue"
             :locale="myLocale"
-            navigation-min-year-month="1920/01"
-            navigation-max-year-month="2017/12"
+            :navigation-min-year-month="minDate"
+            :navigation-max-year-month="2017/12"
             default-year-month="2000/12"
             @update:model-value="updateDate"
           >
@@ -32,7 +35,7 @@
 
 <script lang="ts" setup>
 import CInputMain from "@/components/inputs/CInputMain.vue";
-import { mdiCalendarMonth } from "@quasar/extras/mdi-v6";
+import { mdiCalendarMonthOutline } from "@quasar/extras/mdi-v6";
 import { isValid, isAfter, isBefore } from "date-fns"; // Импортируем методы isValid и isAfter из библиотеки date-fns
 
 const props = defineProps({
