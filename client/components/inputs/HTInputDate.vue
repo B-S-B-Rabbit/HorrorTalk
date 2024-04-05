@@ -19,8 +19,8 @@
             :model-value="modelValue"
             :locale="myLocale"
             :navigation-min-year-month="minDate"
-            :navigation-max-year-month="2017/12"
-            default-year-month="2000/12"
+            :navigation-max-year-month="maxDate"
+            :default-year-month="defaultDate"
             @update:model-value="updateDate"
           >
             <div class="row items-center justify-end">
@@ -40,6 +40,18 @@ import { isValid, isAfter, isBefore } from "date-fns"; // Импортируем
 
 const props = defineProps({
   modelValue: {
+    type: String,
+    default: "",
+  },
+  minDate: {
+    type: String,
+    default: "1920/01",
+  },
+  maxDate: {
+    type: String,
+    default: "",
+  },
+  defaultDate: {
     type: String,
     default: "",
   },
@@ -77,7 +89,7 @@ const validateDate: Rule[] = [
     rule: (value: string) => {
       const [day, month, year] = value.split(".").map(Number); // Разделяем строку и преобразуем компоненты в числа
       // Проверяем, что месяц не превышает 12 и что введенная дата не больше 2017 года
-      if (day > 31 || month > 12 || year > 2017) {
+      if (day > 31 || month > 12 || year > 2024) {
         return false;
       }
       const enteredDate = new Date(year, month - 1, day); // Создаем объект Date с правильным форматом

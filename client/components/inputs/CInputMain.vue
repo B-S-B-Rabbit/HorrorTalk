@@ -8,8 +8,8 @@
     :label="label"
     :type="isPwd ? 'password' : type == 'password' ? 'text' : type"
     borderless
-    :style="`height: ${(hint || fieldHasError) && active ? '60px' : '54px'}; 
-      ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}`"
+    :style="`height: 60px; 
+      ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}; padding-top: 2px;`"
     :hint="hint"
     :rules="[(val: string) => checkRules(val)]"
     no-error-icon
@@ -125,10 +125,28 @@ function updateVal(value: string) {
 }
 .text-input {
   overflow: hidden;
-  transition: all 0.2s ease;
   padding-left: 20px;
   font-size: 16px;
   border-radius: 16px;
   background-color: var(--app-white-1);
+  transition:
+    border-color 0.2s ease,
+    height 0.2s ease;
+  border: 1px solid transparent; /* Устанавливаем прозрачную рамку */
+}
+
+.text-input.active {
+  border-color: #bc0909; /* Устанавливаем цвет рамки при активации */
+}
+
+.text-input:focus-within {
+  border-color: #bc0909; /* Устанавливаем цвет рамки при фокусе */
+  height: 60px; /* Устанавливаем высоту рамки при фокусе */
+}
+
+/* Добавляем внешний отступ внутренним элементам, чтобы рамка не уменьшала внутреннюю высоту */
+.text-input input,
+.text-input textarea {
+  padding-top: 2px; /* Устанавливаем дополнительный отступ при активации */
 }
 </style>
