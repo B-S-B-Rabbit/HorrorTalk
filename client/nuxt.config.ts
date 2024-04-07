@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       brand: {
         primary: "#BC0909",
         dark: "#120C0A",
-        negative: "purple",
+        negative: "#BD7700",
         positive: "#BC0909",
       },
     },
