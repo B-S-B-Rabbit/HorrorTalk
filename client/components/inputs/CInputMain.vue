@@ -9,7 +9,8 @@
     :type="isPwd ? 'password' : type == 'password' ? 'text' : type"
     borderless
     :style="`height: 60px; 
-      ${active ? `border: 1px ${fieldHasError ? 'purple' : '#BC0909'} solid` : ''}; padding-top: 2px;`"
+      ${active ? `border: 1px ${fieldHasError ? '#BD7700' : '#BC0909'} solid` : ''}; padding-top: 2px;`"
+    :input-style="`${marginTextInput && (fieldHasError || hint) ? 'margin-bottom: 4px;' : ''}`"
     :hint="hint"
     :rules="[(val: string) => checkRules(val)]"
     no-error-icon
@@ -89,6 +90,10 @@ const props = defineProps({
   type: {
     type: String,
     default: "text",
+  },
+  marginTextInput: {
+    type: Boolean,
+    default: false,
   },
 });
 interface Rule {

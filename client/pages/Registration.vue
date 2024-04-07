@@ -14,6 +14,7 @@
             v-for="(item, index) in formLabels.slice(0, 3)"
             :key="index"
             v-model="item.value"
+            margin-text-input
             class="registration-form_input-text"
             :hint="item.hint"
             :rules="item.validate"
