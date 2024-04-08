@@ -55,14 +55,15 @@
         </q-form>
       </div>
       <div class="register-block">
-        <div class="confirm-reg-block">
+        <div class="text-block">
           Регистрируясь, вы соглашаетесь с
           <a class="link">Правилами использования</a> и
           <a class="link">Политикой конфиденциальности</a>
         </div>
         <HTButton class="registration-button" label="Зарегистрироваться" />
-        <div class="confirm-reg-block">
-          Уже есть аккаунт? <span class="link">Войти</span>
+        <div class="text-block">
+          Уже есть аккаунт?
+          <nuxt-link to="/login" class="link">Войти</nuxt-link>
         </div>
       </div>
     </div>
@@ -144,6 +145,7 @@ body,
 }
 .link {
   color: var(--app-blue-2);
+  text-decoration: none;
 }
 .main-container {
   width: 100%;
@@ -155,7 +157,7 @@ body,
     .registration-button {
       margin: 24px 0px;
     }
-    .confirm-reg-block {
+    .text-block {
       color: var(--app-black-4);
       text-align: center;
       &:last-child {

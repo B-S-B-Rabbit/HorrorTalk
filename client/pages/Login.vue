@@ -31,12 +31,15 @@
         </q-form>
       </div>
       <div class="register-block">
-        <div class="confirm-reg-block">
+        <div class="text-block">
           <a class="link">Забыли пароль?</a>
         </div>
-        <HTButton class="registration-button" label="Зарегистрироваться" />
-        <div class="confirm-reg-block">
-          Еще нет аккаунта? <span class="link">Зарегистрироваться</span>
+        <HTButton class="registration-button" label="Войти" />
+        <div class="text-block">
+          Еще нет аккаунта?
+          <nuxt-link to="/registration" class="link"
+            >Зарегистрироваться</nuxt-link
+          >
         </div>
       </div>
     </div>
@@ -84,6 +87,7 @@ body,
 }
 .link {
   color: var(--app-blue-2);
+  text-decoration: none;
 }
 .main-container {
   width: 100%;
@@ -95,7 +99,7 @@ body,
     .registration-button {
       margin: 24px 0px;
     }
-    .confirm-reg-block {
+    .text-block {
       color: var(--app-black-4);
       text-align: center;
       &:last-child {
@@ -121,37 +125,6 @@ body,
           margin-bottom: 16px;
           &:last-child {
             margin-bottom: 32px;
-          }
-        }
-        &_input-date {
-          width: 55%;
-          margin-bottom: 7px;
-        }
-        .radio-container {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          padding-left: 15px;
-          margin-bottom: 13px;
-          .radio-label {
-            color: var(--app-black-4);
-            font-size: 14px;
-          }
-          .radio-buttons {
-            color: var(--app-white-1);
-            margin: 8px 0px 12px 0px;
-          }
-        }
-        .date-container {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          padding-left: 15px;
-          .date-label {
-            color: var(--app-black-4);
-            font-size: 14px;
           }
         }
       }
