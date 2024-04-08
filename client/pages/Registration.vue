@@ -77,6 +77,9 @@ import CInputMain from "~/components/inputs/CInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
 import HTButton from "~/components/HTButton.vue";
+definePageMeta({
+  layout: false,
+});
 const value: Ref<string> = ref("");
 const dateOfBirth: Ref<string> = ref("");
 interface ValidationRule {
@@ -131,25 +134,14 @@ const options: Option[] = [
 ];
 const selectedGender: Ref<string> = ref("");
 </script>
-<style lang="scss">
-* {
-  box-sizing: border-box;
-}
-html,
-body,
-#__nuxt {
-  width: 100vw;
-  height: 100vh;
-  background: var(--app-black-1);
-  font-family: Inter, sans-serif;
-}
+<style scoped lang="scss">
 .link {
   color: var(--app-blue-2);
   text-decoration: none;
 }
 .main-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   padding: 0 5%;
   display: flex;
   .registration-wrapper {
