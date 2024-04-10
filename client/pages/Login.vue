@@ -53,7 +53,9 @@ import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
 import HTButton from "~/components/HTButton.vue";
 import type { Ref } from "vue";
-
+definePageMeta({
+  layout: false,
+});
 interface AuthDataType {
   login: string;
   password: string;
@@ -74,24 +76,13 @@ const authDataRef: Ref<AuthDataType> = ref({
 });
 </script>
 <style lang="scss">
-* {
-  box-sizing: border-box;
-}
-html,
-body,
-#__nuxt {
-  width: 100vw;
-  height: 100vh;
-  background: var(--app-black-1);
-  font-family: Inter, sans-serif;
-}
 .link {
   color: var(--app-blue-2);
   text-decoration: none;
 }
 .main-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   padding: 0 5%;
   display: flex;
   .registration-wrapper {
