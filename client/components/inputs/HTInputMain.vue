@@ -33,6 +33,9 @@
     "
     @update:model-value="updateVal"
   >
+    <template v-if="prepend" #prepend>
+      <slot name="prependIcon"></slot>
+    </template>
     <template #append>
       <q-icon
         v-if="type != 'password' && active && textValidityCheck"
@@ -66,6 +69,10 @@ const props = defineProps({
   modelValue: {
     type: String,
     default: "",
+  },
+  prepend: {
+    type: Boolean,
+    default: false,
   },
   textValidityCheck: {
     type: Boolean,

@@ -1,5 +1,5 @@
 <template>
-  <CInputMain
+  <HTInputMain
     type="text"
     mask="##.##.####"
     :text-validity-check="false"
@@ -30,11 +30,11 @@
         </q-popup-proxy>
       </q-icon>
     </template>
-  </CInputMain>
+  </HTInputMain>
 </template>
 
 <script lang="ts" setup>
-import CInputMain from "@/components/inputs/CInputMain.vue";
+import HTInputMain from "@/components/inputs/HTInputMain.vue";
 import { mdiCalendarMonthOutline } from "@quasar/extras/mdi-v6";
 import { isValid, isAfter, isBefore } from "date-fns"; // Импортируем методы isValid и isAfter из библиотеки date-fns
 

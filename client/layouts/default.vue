@@ -22,7 +22,7 @@ import {
 } from "@quasar/extras/mdi-v6";
 
 const menuItems = ref([
-  { label: "Мой профиль", icon: mdiAccountCircleOutline, route: "/profile" },
+  { label: "Профиль", icon: mdiAccountCircleOutline, route: "/profile" },
   { label: "Главная", icon: mdiHome, route: "/" },
   { label: "Фильмы", icon: mdiFilm, route: "/films" },
   { label: "Статьи", icon: mdiNewspaper, route: "/articles" },

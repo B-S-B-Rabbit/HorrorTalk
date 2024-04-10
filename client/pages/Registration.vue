@@ -10,7 +10,7 @@
       </div>
       <div class="registration-container">
         <q-form class="registration-form">
-          <CInputMain
+          <HTInputMain
             v-for="(item, index) in formLabels.slice(0, 3)"
             :key="index"
             v-model="item.value"
@@ -20,7 +20,7 @@
             :rules="item.validate"
             :label="item.label"
           >
-          </CInputMain>
+          </HTInputMain>
           <div class="date-container">
             <div class="date-label">Дата рождения</div>
             <HTInputDate
@@ -43,7 +43,7 @@
               :options="options"
             />
           </div>
-          <CInputMain
+          <HTInputMain
             v-model="formLabels[3].value"
             type="password"
             class="registration-form_input-text"
@@ -51,7 +51,7 @@
             :hint="formLabels[3].hint"
             :rules="formLabels[3].validate"
           >
-          </CInputMain>
+          </HTInputMain>
         </q-form>
       </div>
       <div class="register-block">
@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Ref } from "vue";
-import CInputMain from "~/components/inputs/CInputMain.vue";
+import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
 import HTButton from "~/components/HTButton.vue";
