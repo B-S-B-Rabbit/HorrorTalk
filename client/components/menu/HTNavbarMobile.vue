@@ -33,7 +33,9 @@
         class="menu-item"
         :label="item.label"
         :icon="item.icon"
-        @click="navigate(item.route)"
+        button-style="height: 20px !important"
+        :to="item.route"
+        @click="toggleActive"
       />
     </div>
   </div>
@@ -45,7 +47,7 @@ interface MenuItem {
   icon: string;
   route: string;
 }
-
+const router = useRouter();
 const props = defineProps({
   logoSrc: {
     type: String,
@@ -61,9 +63,6 @@ const isActive = ref(false);
 
 const toggleActive = () => {
   isActive.value = !isActive.value;
-};
-const navigate = (route: string) => {
-  console.log("Navigating to", route);
 };
 </script>
 <style scoped lang="scss">
@@ -84,8 +83,7 @@ const navigate = (route: string) => {
     z-index: 20000;
     text-align: start;
     display: block;
-    height: 30px;
-    width: 80%;
+    width: auto;
     margin-top: 16px;
     margin-left: 24px;
     color: var(--app-white-1);

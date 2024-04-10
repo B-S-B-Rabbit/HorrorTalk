@@ -10,7 +10,7 @@
       </div>
       <div class="registration-container">
         <q-form class="registration-form">
-          <CInputMain
+          <HTInputMain
             v-model="authDataRef.login"
             margin-text-input
             class="registration-form_input-text"
@@ -18,8 +18,8 @@
             :rules="validateLogin"
             label="Логин"
           >
-          </CInputMain>
-          <CInputMain
+          </HTInputMain>
+          <HTInputMain
             v-model="authDataRef.password"
             type="password"
             class="registration-form_input-text"
@@ -27,7 +27,7 @@
             hint="Больше 5 символов"
             :rules="validateLogin"
           >
-          </CInputMain>
+          </HTInputMain>
         </q-form>
       </div>
       <div class="register-block">
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import CInputMain from "~/components/inputs/CInputMain.vue";
+import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
 import HTButton from "~/components/HTButton.vue";
