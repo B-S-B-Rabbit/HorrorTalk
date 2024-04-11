@@ -22,6 +22,7 @@
       v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
       :key="i"
       :film-item="films[0]"
+      @click="router.push({ path: `/films/${i}` })"
     ></FilmCard>
   </div>
 </template>
@@ -32,6 +33,7 @@ import FilmCard from "~/components/films/FilmCard.vue";
 import { mdiMagnify } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");
 const films = ref([]);
+const router = useRouter();
 films.value = [
   {
     imageSrc: "/film_card_mock-image.webp",
