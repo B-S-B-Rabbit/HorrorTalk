@@ -1,7 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@pinia/nuxt", "nuxt-quasar-ui", "@nuxtjs/google-fonts"],
+  modules: [
+    "@pinia/nuxt",
+    "nuxt-quasar-ui",
+    "@nuxtjs/google-fonts",
+    "vue3-carousel-nuxt",
+  ],
+  alias: {
+    "vue3-carousel/dist/carousel.js": "vue3-carousel/dist/carousel.es.js",
+  },
   css: [`/public/assets/colors.scss`],
   googleFonts: {
     families: {
