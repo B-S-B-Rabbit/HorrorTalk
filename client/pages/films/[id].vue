@@ -24,22 +24,12 @@
     </div>
     <div class="first-buttons-container">
       <HTButtonDropdown
-        :list-items="[
-          'Шедевр!',
-          'Отлично',
-          'Хорошо',
-          'Средненько',
-          'Так себе',
-          'Скучно',
-          'Ни о чем',
-          'Плохо',
-          'Ужасно',
-          'Треш',
-        ]"
+        :list-items="scores"
         label="Оценить"
         :icon="mdiThumbsUpDown"
+        @choose-item="updateSelected"
       >
-        <template #icon>
+        <template #custom-label>
           <img
             style="filter: var(--app-yellow-star-filter)"
             width="16"
@@ -48,7 +38,19 @@
           />
         </template>
       </HTButtonDropdown>
-      <HTButton label="Сохранить" :icon="mdiBookmark"></HTButton>
+      <HTButtonDropdown
+        :list-items="bookmarks"
+        :multiple="true"
+        hide-counting
+        label="Сохранить"
+        :icon="mdiBookmark"
+        @choose-item="
+          (item) => {
+            updateSelected(item, bookmarks, true);
+          }
+        "
+      >
+      </HTButtonDropdown>
     </div>
     <div class="film-trailer">
       <div class="subtitle-text">Трейлер</div>
@@ -117,6 +119,37 @@ import {
   mdiBookmark,
   mdiArrowTopRight,
 } from "@quasar/extras/mdi-v7";
+const scores = ref([
+  { text: "Шедевр!", selected: false },
+  { text: "Отлично", selected: false },
+  { text: "Хорошо", selected: false },
+  { text: "Средненько", selected: false },
+  { text: "Так себе", selected: false },
+  { text: "Скучно", selected: false },
+  { text: "Ни о чем", selected: false },
+  { text: "Плохо", selected: false },
+  { text: "Ужасно", selected: false },
+  { text: "Треш", selected: false },
+]);
+const bookmarks = ref([
+  { text: "В планах", selected: false },
+  { text: "Просмотрено", selected: false },
+  { text: "Брошено", selected: false },
+  { text: "Фавориты", selected: false },
+  { text: "Мой список", selected: false },
+]);
+function updateSelected(item, allItems, multiple) {
+  if (!multiple) {
+    console.log(item);
+  } else {
+    allItems.forEach((itemScore) => {
+      if (itemScore.text === item.text) {
+        itemScore.selected = !itemScore.selected;
+        console.log("sdds");
+      }
+    });
+  }
+}
 </script>
 
 <style lang="scss" scoped>
