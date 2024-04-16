@@ -4,13 +4,13 @@
     :model-value="modelValue"
     class="text-input"
     :placeholder="placeholder"
-    bg-white
     :label="label"
     :type="isPwd ? 'password' : type == 'password' ? 'text' : type"
     borderless
-    :style="`height: 60px; 
-      ${active ? `border: 1px ${fieldHasError ? '#BD7700' : '#BC0909'} solid` : ''}; padding-top: 2px;`"
-    :input-style="`${marginTextInput && (fieldHasError || hint) ? 'margin-bottom: 4px;' : ''}`"
+    :autogrow="autogrow"
+    :style="`height: ${autogrow ? 'auto' : '60px'}; 
+      ${active || persistentBorder ? `border: 1px ${fieldHasError ? '#BD7700' : borderColor} solid` : ''}; padding-top: 2px;`"
+    :input-style="`${marginTextInput && (fieldHasError || hint) ? 'margin-bottom: 4px;' : ''};`"
     :hint="hint"
     :rules="[(val: string) => checkRules(val)]"
     no-error-icon
@@ -62,7 +62,6 @@ import {
   mdiEyeOffOutline,
   mdiEyeOutline,
 } from "@quasar/extras/mdi-v6";
-import { ref } from "vue";
 import type { Ref } from "vue";
 import { QInput } from "quasar";
 const props = defineProps({
@@ -99,6 +98,22 @@ const props = defineProps({
     default: "text",
   },
   marginTextInput: {
+    type: Boolean,
+    default: false,
+  },
+  mainColor: {
+    type: String,
+    default: "var(--app-white-1)",
+  },
+  borderColor: {
+    type: String,
+    default: "var(--app-red-1)",
+  },
+  autogrow: {
+    type: Boolean,
+    default: false,
+  },
+  persistentBorder: {
     type: Boolean,
     default: false,
   },
@@ -140,23 +155,12 @@ function updateVal(value: string) {
   padding-left: 20px;
   font-size: 16px;
   border-radius: 16px;
-  background-color: var(--app-white-1);
+  background-color: v-bind($props.mainColor);
   transition:
     border-color 0.2s ease,
     height 0.2s ease;
   border: 1px solid transparent; /* Устанавливаем прозрачную рамку */
 }
-
-.text-input.active {
-  border-color: #bc0909; /* Устанавливаем цвет рамки при активации */
-}
-
-.text-input:focus-within {
-  border-color: #bc0909; /* Устанавливаем цвет рамки при фокусе */
-  height: 60px; /* Устанавливаем высоту рамки при фокусе */
-}
-
-/* Добавляем внешний отступ внутренним элементам, чтобы рамка не уменьшала внутреннюю высоту */
 .text-input input,
 .text-input textarea {
   padding-top: 2px; /* Устанавливаем дополнительный отступ при активации */

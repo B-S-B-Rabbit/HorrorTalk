@@ -4,7 +4,7 @@
       <img src="/film_card_mock-image.webp" alt="" />
     </div>
     <div class="film-info">
-      <div class="film-info-title">Название фильма</div>
+      <div class="film-info-title subtitle-text">Название фильма</div>
       <div style="display: flex">
         <div class="film-info-genre">Триллер</div>
         <div class="film-info-year">2025</div>
@@ -57,8 +57,52 @@
       <div class="film-trailer-video"></div>
     </div>
     <div class="detail-info">
-      <div class="detail-info-title">Подробнее</div>
-      <div></div>
+      <div
+        v-if="!showDetails"
+        class="detail-info-title"
+        @click="showDetails = true"
+      >
+        Подробнее
+      </div>
+      <transition name="slide-down">
+        <div v-if="showDetails">
+          <div class="subtitle-text">Режиссёр</div>
+          <div>Имя режиссера</div>
+          <div class="subtitle-text">Актёры</div>
+          <div class="actors-block">
+            <div
+              v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+              :key="i"
+              class="actor-block"
+            >
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/avatar.png" />
+              </q-avatar>
+              <div style="text-align: center">
+                Matthew<br />
+                McConaughey
+              </div>
+            </div>
+          </div>
+          <div class="subtitle-text">Краткое описание</div>
+          <div>
+            Дороги в Эквадоре практически идеальные, хотя населенные пункты
+            выглядят очень бедно. На дорогах много интересных машин, например
+            очень много грузовиков - древних Фордов, которые я никогда раньше не
+            видел. А еще несколько раз на глаза попадались старенькие Жигули :)
+            А еще если кого-то обгоняешь и есть встречная машина, она
+            обязательно включает фары. На больших машинах - грузовиках и
+            автобусах, обязательно красуется
+          </div>
+        </div>
+      </transition>
+      <div
+        v-if="showDetails"
+        class="detail-info-title"
+        @click="showDetails = false"
+      >
+        Скрыть
+      </div>
     </div>
     <div class="alike-films">
       <div class="subtitle-text">Похожие фильмы</div>
@@ -77,7 +121,14 @@
     </div>
     <div class="comments-block">
       <div class="subtitle-text">Отзывы</div>
-      <div>Текстарея</div>
+      <div class="textarea-block">
+        <div class="textarea-input">
+          <InputsHTTextArea v-model="reviewText"></InputsHTTextArea>
+        </div>
+        <div class="send-button">
+          <HTButton icon-button :icon="mdiSend" @click="sendJson"></HTButton>
+        </div>
+      </div>
       <div class="comments-block-reviews">
         <div class="user-review">
           <div class="user-review-header">
@@ -118,6 +169,7 @@ import {
   mdiThumbsUpDown,
   mdiBookmark,
   mdiArrowTopRight,
+  mdiSend,
 } from "@quasar/extras/mdi-v7";
 const scores = ref([
   { text: "Шедевр!", selected: false },
@@ -138,6 +190,8 @@ const bookmarks = ref([
   { text: "Фавориты", selected: false },
   { text: "Мой список", selected: false },
 ]);
+const reviewText = ref("");
+const showDetails = ref(false);
 function updateSelected(item, allItems, multiple) {
   if (!multiple) {
     console.log(item);
@@ -150,11 +204,40 @@ function updateSelected(item, allItems, multiple) {
     });
   }
 }
+async function sendJson() {
+  const jsonData = {
+    name: "John Doe",
+    age: 30,
+    email: "john.doe@example.com",
+    // Добавьте любые другие данные, которые вы хотите отправить
+  };
+
+  try {
+    const response: any = await $fetch(
+      "http://192.168.1.72:5000/receive_json",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonData),
+      },
+    );
+
+    if (response.ok) {
+      console.log("JSON отправлен успешно!");
+    } else {
+      console.error("Произошла ошибка при отправке JSON:", response.status);
+    }
+  } catch (error) {
+    console.error("Произошла ошибка при отправке JSON:", error);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
 .film-container {
-  padding: 0px 16px 0px 16px;
+  padding: 0px 32px;
   color: var(--app-white-1);
   .subtitle-text {
     font-size: 18px;
@@ -221,10 +304,24 @@ function updateSelected(item, allItems, multiple) {
     }
   }
   .detail-info {
+    overflow: hidden;
     &-title {
       text-align: center;
       text-decoration: underline;
       margin: 16px;
+    }
+    .actors-block {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      align-items: center;
+      .actor-block {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 4px;
+      }
     }
   }
   .alike-films {
@@ -232,6 +329,19 @@ function updateSelected(item, allItems, multiple) {
     border-bottom: 2px var(--app-black-5) solid;
   }
   .comments-block {
+    .textarea-block {
+      margin: 8px 0px 16px 0px;
+      display: flex;
+      width: 100%;
+      .textarea-input {
+        width: 100%;
+      }
+      .send-button {
+        display: flex;
+        align-self: end;
+        margin: 8px;
+      }
+    }
     &-reviews {
       .user-review {
         &-header {
@@ -303,5 +413,13 @@ function updateSelected(item, allItems, multiple) {
 .carousel__slide--active {
   opacity: 1;
   transform: rotateY(0) scale(1.1);
+}
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.2s;
+}
+.slide-down-enter,
+.slide-down-leave-to {
+  transform: translateY(-100%);
 }
 </style>
