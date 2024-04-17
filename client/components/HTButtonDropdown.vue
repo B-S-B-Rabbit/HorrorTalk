@@ -14,6 +14,7 @@
         :key="ind"
         v-close-popup="!multiple"
         class="dropdown-item"
+        :class="item.selected && !multiple ? 'active' : ''"
         clickable
         @click="chooseItem(item)"
       >
@@ -26,7 +27,7 @@
                 @update:model-value="chooseItem(item)"
               />
             </div>
-            <div v-if="!hideCounting" style="width: 20px">{{ 10 - ind }}</div>
+            <div v-if="!hideCounting" style="width: 20px">{{ item.key }}</div>
             <slot name="custom-label"></slot>
             <div>{{ item.text }}</div>
           </q-item-label>
@@ -40,9 +41,13 @@
 interface ListItem {
   text: string;
   selected: boolean;
+  key?: number;
 }
-
 const props = defineProps({
+  modelValue: {
+    type: String,
+    default: "",
+  },
   listItems: {
     type: Array as PropType<ListItem[]>,
     default: () => [],
@@ -61,7 +66,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["chooseItem"]);
+const emit = defineEmits(["chooseItem", "update:modelValue"]);
 const isActive = ref(false);
 
 function setActive() {
@@ -70,6 +75,15 @@ function setActive() {
 
 function chooseItem(item: ListItem) {
   emit("chooseItem", item);
+  if (!props.multiple) {
+    emit("update:modelValue", item.key?.toString());
+  } else {
+    const items = props.listItems.filter((item) => item.selected);
+    console.log(items);
+    if (items.length == 0) {
+      emit("update:modelValue", "");
+    } else emit("update:modelValue", "true");
+  }
 }
 </script>
 
@@ -88,7 +102,10 @@ function chooseItem(item: ListItem) {
   .dropdown-item {
     padding: 8px;
   }
-
+  .dropdown-item.active {
+    border: 1px var(--app-red-1) solid;
+    border-radius: 16px;
+  }
   .dropdown-label {
     display: flex;
     justify-content: flex-start;

@@ -24,10 +24,15 @@
     </div>
     <div class="first-buttons-container">
       <HTButtonDropdown
+        v-model="myScore"
         :list-items="scores"
-        label="Оценить"
+        :label="myScore ? 'Оценено' : 'Оценить'"
         :icon="mdiThumbsUpDown"
-        @choose-item="updateSelected"
+        @choose-item="
+          (item) => {
+            updateSelected(item, scores);
+          }
+        "
       >
         <template #custom-label>
           <img
@@ -39,10 +44,11 @@
         </template>
       </HTButtonDropdown>
       <HTButtonDropdown
+        v-model="isBookmarks"
         :list-items="bookmarks"
         :multiple="true"
         hide-counting
-        label="Сохранить"
+        :label="isBookmarks ? 'Сохранено' : 'Сохранить'"
         :icon="mdiBookmark"
         @choose-item="
           (item) => {
@@ -51,6 +57,10 @@
         "
       >
       </HTButtonDropdown>
+    </div>
+    <div v-if="myScore" class="my-score">
+      <span class="subtitle-text">Ваша оценка:</span>
+      <span class="score-text">{{ myScore }}</span>
     </div>
     <div class="film-trailer">
       <div class="subtitle-text">Трейлер</div>
@@ -64,7 +74,7 @@
       >
         Подробнее
       </div>
-      <transition name="slide-down">
+      <Transition name="slide-down">
         <div v-if="showDetails">
           <div class="subtitle-text">Режиссёр</div>
           <div>Имя режиссера</div>
@@ -95,7 +105,7 @@
             автобусах, обязательно красуется
           </div>
         </div>
-      </transition>
+      </Transition>
       <div
         v-if="showDetails"
         class="detail-info-title"
@@ -172,17 +182,19 @@ import {
   mdiSend,
 } from "@quasar/extras/mdi-v7";
 const scores = ref([
-  { text: "Шедевр!", selected: false },
-  { text: "Отлично", selected: false },
-  { text: "Хорошо", selected: false },
-  { text: "Средненько", selected: false },
-  { text: "Так себе", selected: false },
-  { text: "Скучно", selected: false },
-  { text: "Ни о чем", selected: false },
-  { text: "Плохо", selected: false },
-  { text: "Ужасно", selected: false },
-  { text: "Треш", selected: false },
+  { text: "Шедевр!", selected: false, key: 10 },
+  { text: "Отлично", selected: false, key: 9 },
+  { text: "Хорошо", selected: false, key: 8 },
+  { text: "Средненько", selected: false, key: 7 },
+  { text: "Так себе", selected: false, key: 6 },
+  { text: "Скучно", selected: false, key: 5 },
+  { text: "Ни о чем", selected: false, key: 4 },
+  { text: "Плохо", selected: false, key: 3 },
+  { text: "Ужасно", selected: false, key: 2 },
+  { text: "Треш", selected: false, key: 1 },
 ]);
+const myScore = ref("");
+const isBookmarks = ref("");
 const bookmarks = ref([
   { text: "В планах", selected: false },
   { text: "Просмотрено", selected: false },
@@ -192,14 +204,19 @@ const bookmarks = ref([
 ]);
 const reviewText = ref("");
 const showDetails = ref(false);
-function updateSelected(item, allItems, multiple) {
+function updateSelected(item, allItems, multiple = false) {
   if (!multiple) {
-    console.log(item);
+    allItems.forEach((itemScore) => {
+      if (itemScore.text === item.text) {
+        itemScore.selected = true;
+      } else {
+        itemScore.selected = false;
+      }
+    });
   } else {
     allItems.forEach((itemScore) => {
       if (itemScore.text === item.text) {
         itemScore.selected = !itemScore.selected;
-        console.log("sdds");
       }
     });
   }
@@ -289,6 +306,21 @@ async function sendJson() {
     align-items: center;
     gap: 8px;
     margin-top: 20px;
+  }
+  .my-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .score-text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--app-red-1);
+      font-size: 22px;
+      font-weight: 700;
+      margin-left: 16px;
+      margin-top: 4px;
+    }
   }
   .film-trailer {
     padding: 0px 16px;
@@ -416,9 +448,9 @@ async function sendJson() {
 }
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: transform 0.2s;
+  transition: transform 0.3s;
 }
-.slide-down-enter,
+.slide-down-enter-from,
 .slide-down-leave-to {
   transform: translateY(-100%);
 }
