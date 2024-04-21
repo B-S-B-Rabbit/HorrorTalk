@@ -140,7 +140,7 @@
           ></InputsHTTextArea>
         </div>
         <div
-          v-if="showSendBitton && reviewText.length > 10"
+          v-if="showSendBitton || reviewText.length > 10"
           class="send-button"
         >
           <HTButton icon-button :icon="mdiSend" @click="sendJson"></HTButton>
