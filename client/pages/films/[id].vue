@@ -133,13 +133,49 @@
       <div class="subtitle-text">Отзывы</div>
       <div class="textarea-block">
         <div class="textarea-input">
-          <InputsHTTextArea v-model="reviewText"></InputsHTTextArea>
+          <InputsHTTextArea
+            v-model="reviewText"
+            @focus="showSendBitton = !showSendBitton"
+            @blur="showSendBitton = !showSendBitton"
+          ></InputsHTTextArea>
         </div>
-        <div class="send-button">
+        <div
+          v-if="showSendBitton && reviewText.length > 10"
+          class="send-button"
+        >
           <HTButton icon-button :icon="mdiSend" @click="sendJson"></HTButton>
         </div>
       </div>
       <div class="comments-block-reviews">
+        <div class="user-review">
+          <div class="user-review-header">
+            <q-avatar>
+              <img src="https://cdn.quasar.dev/img/avatar.png" />
+            </q-avatar>
+            <div>Пользователь</div>
+          </div>
+          <div class="user-review-body">
+            <div class="film-score-stars">
+              <img
+                v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+                :key="i"
+                :style="`filter: ${1 >= i ? 'var(--app-yellow-star-filter);' : 'var(--app-default-star-filter)'}`"
+                src="/icons/star_score.svg"
+                alt=""
+              />
+            </div>
+            <div>
+              Ну короче мне понравилось классный фильм жду продолжения,
+              актерская игра на уровне, сюжет продуман до мелочей, смотрится
+              хорошо, и я даже хз что еще написать чтобы было дохуя текста,
+              вроде бы он и так нормально ужимается и читается, но над
+              оформлением нужно подумать мб
+            </div>
+          </div>
+          <div class="replay-button">
+            Ответить <q-icon size="sm" :name="mdiArrowTopRight"></q-icon>
+          </div>
+        </div>
         <div class="user-review">
           <div class="user-review-header">
             <q-avatar>
@@ -193,6 +229,7 @@ const scores = ref([
   { text: "Ужасно", selected: false, key: 2 },
   { text: "Треш", selected: false, key: 1 },
 ]);
+const showSendBitton = ref(false);
 const myScore = ref("");
 const isBookmarks = ref("");
 const bookmarks = ref([
@@ -389,6 +426,8 @@ async function sendJson() {
           gap: 8px;
         }
         .replay-button {
+          text-align: end;
+          margin: 12px;
           font-size: 16px;
         }
       }
