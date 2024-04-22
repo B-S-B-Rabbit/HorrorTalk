@@ -92,6 +92,7 @@ function chooseItem(item: ListItem) {
   width: 100%;
   height: 54px;
   border-radius: 16px;
+  color: var(--app-white-1);
 }
 
 .dropdown-list {
