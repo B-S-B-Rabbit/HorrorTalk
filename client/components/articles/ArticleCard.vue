@@ -80,6 +80,7 @@ const props = defineProps({
     &-description {
       margin-top: 8px;
       overflow: auto;
+      text-align: center;
     }
   }
 }
