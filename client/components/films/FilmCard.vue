@@ -1,6 +1,9 @@
 <template>
   <div class="film-card-container">
-    <div class="film-card">
+    <div
+      class="film-card"
+      :class="[large ? 'large' : '', isOverflowed ? 'overflowed' : '']"
+    >
       <div class="film-card-image">
         <img :src="filmItem.imageSrc" alt="" />
       </div>
@@ -11,6 +14,11 @@
           <div class="film-text-info">{{ filmItem.author }}</div>
           <div class="film-text-info">{{ filmItem.year }}</div>
           <div class="film-text-info">{{ filmItem.country }}</div>
+        </div>
+        <div v-if="large" ref="descriptionRef" class="film-card-description">
+          Телефонный звонок раздаётся после просмотра некой загадочной
+          видеокассеты. Жертве даётся ровно семь дней, до смерти, поэтому
+          помянем епта
         </div>
       </div>
     </div>
@@ -23,7 +31,31 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  large: {
+    type: Boolean,
+    default: false,
+  },
 });
+const isOverflowed = ref(false);
+const descriptionRef = ref(null);
+watch(
+  () => descriptionRef.value,
+  () => {
+    const descriptionElement = descriptionRef.value;
+    if (descriptionElement) {
+      const style = window.getComputedStyle(descriptionElement);
+      const lineHeight = parseFloat(style.lineHeight); // Получаем десятичное значение lineHeight
+      const maxHeight = parseFloat(style.height + 8); // Получаем десятичное значение maxHeight
+      console.log(lineHeight, maxHeight);
+      const lineCount = Math.floor(maxHeight / lineHeight);
+      descriptionElement.style.setProperty(
+        "-webkit-line-clamp",
+        lineCount.toString(),
+        "important", // Добавляем important, чтобы переопределить любые существующие стили
+      );
+    }
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -41,6 +73,7 @@ const props = defineProps({
     border: 1px var(--app-black-3) solid;
     .film-score {
       background-color: var(--app-red-1);
+      z-index: 100;
       color: var(--app-white-1);
       width: 32px;
       height: 24px;
@@ -84,6 +117,30 @@ const props = defineProps({
           }
         }
       }
+    }
+  }
+  .large {
+    height: 150px;
+    overflow: hidden;
+    .film-card-image {
+      display: flex;
+      order: 2;
+      margin: 0px 16px;
+    }
+    .film-card-content {
+      margin-bottom: 16px;
+      height: 100%;
+      .film-card-title {
+        margin-top: 16px;
+      }
+    }
+    .film-card-description {
+      margin-top: 8px;
+      overflow: hidden;
+      display: -webkit-box; /* Включаем флексбоксы */
+      -webkit-box-orient: vertical; /* Вертикальная ориентация */
+      height: 20vw;
+      max-height: 90px;
     }
   }
 }
