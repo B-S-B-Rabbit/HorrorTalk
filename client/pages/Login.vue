@@ -108,7 +108,7 @@ const authDataRef: Ref<AuthDataType> = ref({
       }
     }
     .registration-container {
-      margin: 0 calc(14% - 5%);
+      margin: 0 32px;
       display: flex;
       flex-direction: column;
       .registration-form {

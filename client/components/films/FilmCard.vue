@@ -140,6 +140,7 @@ watch(
       display: -webkit-box; /* Включаем флексбоксы */
       -webkit-box-orient: vertical; /* Вертикальная ориентация */
       height: 20vw;
+      line-height: 21px;
       max-height: 90px;
     }
   }

@@ -21,7 +21,6 @@ const props = defineProps({
   },
   icon: {
     type: String,
-    default: "",
   },
   iconButton: {
     type: Boolean,

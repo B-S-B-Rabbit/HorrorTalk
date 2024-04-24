@@ -16,13 +16,12 @@
       <div class="main-label">Содержание:</div>
       <div>
         <FilmsFilmCard
-          v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-          :key="i"
           :film-item="filmss[0]"
           large
-          @click="router.push({ path: `/films/${i}` })"
+          @click="router.push({ path: `/films/${123}` })"
         >
         </FilmsFilmCard>
+        <div class="review-text"><InputsHTTextArea></InputsHTTextArea></div>
       </div>
       <HTButton
         themed
@@ -40,6 +39,7 @@
         ></InputsHTSelect>
       </template>
     </HTDialog>
+    <HTButton class="publish-button" label="Опубликовать"></HTButton>
   </div>
 </template>
 
@@ -94,6 +94,13 @@ function addReviewBlock() {
 .main-label {
   color: var(--app-black-5);
   margin: 8px 0px;
+}
+.review-text {
+  margin-bottom: 16px;
+}
+.publish-button {
+  margin: 16px 0px;
+  margin-top: 64px;
 }
 </style>
 <style></style>
