@@ -4,6 +4,7 @@
       v-model="articleTitle"
       class="title-input"
       placeholder="Введите название статьи"
+      color="primary"
       dark
     />
     <div class="short-review-block">
