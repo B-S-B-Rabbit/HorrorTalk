@@ -14,23 +14,36 @@
     </div>
     <div>
       <div class="main-label">Содержание:</div>
-      <div>
-        <FilmsFilmCard
-          :film-item="filmss[0]"
-          large
-          @click="router.push({ path: `/films/${123}` })"
-        >
-        </FilmsFilmCard>
-        <div class="review-text"><InputsHTTextArea></InputsHTTextArea></div>
+      <div v-for="item in filmss" :key="item.title">
+        <div style="position: relative">
+          <FilmsFilmCard
+            :film-item="item"
+            large
+            @click="router.push({ path: `/films/${123}` })"
+          >
+          </FilmsFilmCard>
+          <q-icon
+            class="replace-film-label"
+            :name="mdiPencil"
+            @click.stop="selectFilm"
+          ></q-icon>
+        </div>
+        <div class="review-text">
+          <InputsHTTextArea v-model="reviewText" clearable></InputsHTTextArea>
+        </div>
       </div>
       <HTButton
         themed
         :icon="mdiPlus"
         label="Добавить фильм"
-        @click="addReviewBlock"
+        @click="selectFilm"
       ></HTButton>
     </div>
-    <HTDialog v-model="openDialog">
+    <HTDialog
+      v-model="openDialog"
+      @cancel-action="cleanSelected"
+      @accept-action="addReviewBlock"
+    >
       <template #main>
         <InputsHTSelect
           v-model="selectedFilm"
@@ -44,14 +57,14 @@
 </template>
 
 <script setup lang="ts">
-import { mdiPlus } from "@quasar/extras/mdi-v7";
+import { mdiPlus, mdiPencil } from "@quasar/extras/mdi-v7";
 const articleTitle = ref("");
 const articleReviewText = ref("");
 const reviewBlocks = ref([]);
 const router = useRouter();
+const reviewText = ref("");
 const selectedFilm = ref("");
-const filmss = ref({});
-filmss.value = [
+const filmss = ref([
   {
     imageSrc: "/film_card_mock-image.webp",
     score: 7.5,
@@ -60,19 +73,36 @@ filmss.value = [
     year: "2024",
     country: "Россия",
   },
-];
+]);
+
 const films = ref([
   "фильм1",
   "фильм2",
   "фильм3",
-  "фильм4",
+  "фиaaaaaaaaaaaaaльм4",
   "фильм5",
   "фильм6",
   "фильм7",
   "фильм8",
 ]);
 const openDialog = ref(false);
+function cleanSelected() {
+  selectedFilm.value = "";
+}
 function addReviewBlock() {
+  if (selectedFilm.value) {
+    filmss.value.push({
+      imageSrc: "/film_card_mock-image.webp",
+      score: 7.5,
+      title: "Синистер",
+      author: "Стенли Кубрик",
+      year: "2024",
+      country: "Россия",
+    });
+    selectedFilm.value = "";
+  }
+}
+function selectFilm() {
   openDialog.value = true;
 }
 </script>
@@ -101,6 +131,14 @@ function addReviewBlock() {
 .publish-button {
   margin: 16px 0px;
   margin-top: 64px;
+}
+.replace-film-label {
+  position: absolute;
+  right: -4%;
+  top: -8%;
+  width: 30px;
+  height: 30px;
+  z-index: 1000;
 }
 </style>
 <style></style>

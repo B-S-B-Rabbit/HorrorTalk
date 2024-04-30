@@ -7,6 +7,8 @@
     border-color="var(--app-black-4)"
     persistent-border
     dark
+    :clearable="clearable"
+    :clear-icon="mdiCloseCircleOutline"
     autogrow
     class="text-area"
     @update:model-value="updateValue"
@@ -15,10 +17,15 @@
 </template>
 
 <script setup lang="ts">
+import { mdiCloseCircleOutline } from "@quasar/extras/mdi-v6";
 const props = defineProps({
   modelValue: {
     type: String,
     default: "",
+  },
+  clearable: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(["update:modelValue"]);

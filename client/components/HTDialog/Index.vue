@@ -15,8 +15,20 @@
       </q-card-section>
 
       <q-card-actions class="footer-buttons">
-        <q-btn v-close-popup color="white" flat label="Закрыть" />
-        <q-btn v-close-popup color="primary" flat label="Применить" />
+        <q-btn
+          v-close-popup
+          color="white"
+          flat
+          label="Закрыть"
+          @click="cancelAction"
+        />
+        <q-btn
+          v-close-popup
+          color="primary"
+          flat
+          label="Применить"
+          @click="acceptAction"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -29,15 +41,25 @@ const props = defineProps({
     default: false,
   },
 });
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits([
+  "update:modelValue",
+  "cancelAction",
+  "acceptAction",
+]);
 function toggleDialog(value: boolean) {
   emits("update:modelValue", value);
+}
+function cancelAction() {
+  emits("cancelAction");
+}
+function acceptAction() {
+  emits("acceptAction");
 }
 </script>
 
 <style scoped>
 .main-dialog {
-  background: var(--app-black-2) !important;
+  background: var(--app-dark-1) !important;
   color: var(--app-white-1);
   display: flex;
   flex-direction: column;

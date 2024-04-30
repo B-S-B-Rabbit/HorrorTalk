@@ -45,7 +45,7 @@ watch(
     if (descriptionElement) {
       const style = window.getComputedStyle(descriptionElement);
       const lineHeight = parseFloat(style.lineHeight); // Получаем десятичное значение lineHeight
-      const maxHeight = parseFloat(style.height + 8); // Получаем десятичное значение maxHeight
+      const maxHeight = parseFloat(style.height); // Получаем десятичное значение maxHeight
       console.log(lineHeight, maxHeight);
       const lineCount = Math.floor(maxHeight / lineHeight);
       descriptionElement.style.setProperty(
