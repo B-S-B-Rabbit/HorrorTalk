@@ -80,17 +80,20 @@ const props = defineProps({
     &-description {
       margin-top: 8px;
       overflow: auto;
+      text-align: center;
     }
   }
 }
 </style>
-<style lang="scss">
+<style scoped lang="scss">
 .carousel__slide {
   height: 40px;
   border: 1px var(--app-black-3) solid;
   border-radius: 10px;
   margin-right: 8px;
 }
+</style>
+<style>
 .carousel__icon {
   fill: var(--app-white-1) !important;
   width: 30px;

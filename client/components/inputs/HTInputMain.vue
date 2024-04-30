@@ -7,6 +7,7 @@
     :label="label"
     :type="isPwd ? 'password' : type == 'password' ? 'text' : type"
     borderless
+    :clearable="clearable"
     :autogrow="autogrow"
     :style="`height: ${autogrow ? 'auto' : '60px'}; 
       ${active || persistentBorder ? `border: 1px ${fieldHasError ? '#BD7700' : borderColor} solid` : ''}; padding-top: 2px;`"
@@ -70,6 +71,10 @@ const props = defineProps({
     default: "",
   },
   prepend: {
+    type: Boolean,
+    default: false,
+  },
+  clearable: {
     type: Boolean,
     default: false,
   },

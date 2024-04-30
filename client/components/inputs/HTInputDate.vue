@@ -1,5 +1,6 @@
 <template>
   <HTInputMain
+    input-style="width: 100px; text-align: center;"
     type="text"
     mask="##.##.####"
     :text-validity-check="false"
@@ -24,7 +25,7 @@
             @update:model-value="updateDate"
           >
             <div class="row items-center justify-end">
-              <q-btn v-close-popup label="Close" color="primary" flat />
+              <q-btn v-close-popup label="Закрыть" color="primary" flat />
             </div>
           </q-date>
         </q-popup-proxy>
