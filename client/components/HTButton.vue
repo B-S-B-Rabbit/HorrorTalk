@@ -27,8 +27,8 @@ const props = defineProps({
     default: false,
   },
   themed: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "",
   },
 });
 </script>
@@ -40,7 +40,7 @@ const props = defineProps({
   border-radius: 16px;
 }
 .main-themed-button {
-  background-color: var(--app-dark-1);
+  background-color: v-bind(themed);
   border: 1px var(--app-black-5) solid;
   height: 30px;
   width: fit-content;

@@ -34,7 +34,7 @@
         </div>
       </div>
       <HTButton
-        themed
+        themed="var(--app-dark-1)"
         :icon="mdiPlus"
         label="Добавить фильм"
         @click="selectFilm"
