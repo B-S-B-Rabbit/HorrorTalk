@@ -20,7 +20,9 @@
       </div>
     </div>
     <div class="big-carousel-list">
-      Популярное
+      <div style="position: relative; top: 12px; left: 5px" class="list-label">
+        Популярно сегодня
+      </div>
       <div>
         <Carousel :items-to-show="1" :wrap-around="true" :transition="500">
           <Slide v-for="slide in 10" :key="slide">
@@ -38,23 +40,61 @@
       </div>
     </div>
     <div class="films-recomendation normal-carousel-list">
-      Рекомендуем вам
-      <div class="no-see">
+      <div class="list-label">Рекомендуем вам</div>
+      <div v-if="false" class="no-see">
         <img src="/icons/lock.svg" />
         <div>Создайте акканут чтобы видеть рекомендации</div>
-        <q-icon size="lg" :name="mdiChevronRight"></q-icon>
+        <q-icon size="xl" :name="mdiChevronRight"></q-icon>
+      </div>
+      <div v-else class="horizontal-list-wrapper">
+        <div class="horizontal-list">
+          <div v-for="film in 10" :key="film" class="list-item">
+            <img class="film-image" src="/film_card_mock-image.jpg" />
+            <div style="text-align: center">Проклятие Аннабель</div>
+          </div>
+        </div>
+        <q-icon
+          class="chevron-right"
+          size="xl"
+          :name="mdiChevronRight"
+        ></q-icon>
       </div>
     </div>
     <div class="users-recomendation circle-carousel-list">
-      Предлагаем пообщаться
-      <div class="no-see">
+      <div class="list-label">Предлагаем пообщаться</div>
+      <div v-if="false" class="no-see">
         <img src="/icons/lock.svg" />
         <div>Создайте акканут чтобы видеть рекомендации</div>
-        <q-icon size="lg" :name="mdiChevronRight"></q-icon>
+        <q-icon size="xl" :name="mdiChevronRight"></q-icon>
+      </div>
+      <div v-else class="horizontal-list-wrapper">
+        <div class="horizontal-list">
+          <div v-for="user in 10" :key="user" class="list-item">
+            <q-avatar>
+              <img src="https://cdn.quasar.dev/img/avatar.png" />
+            </q-avatar>
+            <div style="text-align: center">Никнейм</div>
+          </div>
+        </div>
+        <q-icon
+          class="chevron-right"
+          size="xl"
+          :name="mdiChevronRight"
+        ></q-icon>
       </div>
     </div>
     <div class="articles-recomendation circle-carousel-list">
-      <ArticleCard :film-item="films[0]"> </ArticleCard>
+      <div style="position: relative; top: 28px; left: 5px">
+        <div class="list-label">Популярные статьи</div>
+      </div>
+      <Carousel :items-to-show="1" :wrap-around="true" :transition="500">
+        <Slide v-for="slide in 10" :key="slide">
+          <ArticleCard :film-item="films[0]"> </ArticleCard>
+        </Slide>
+        <template #addons>
+          <Navigation />
+        </template>
+      </Carousel>
     </div>
   </div>
 </template>
@@ -124,12 +164,52 @@ films.value = [
   }
   .films-recomendation {
   }
+
+  .horizontal-list-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    height: 100%;
+    .horizontal-list {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      gap: 8px;
+      .film-image {
+        width: 120px;
+        object-fit: contain;
+      }
+      .list-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .chevron-right {
+      position: absolute;
+      right: -8px;
+      height: 100%;
+      box-shadow: 8px 0px 8px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(
+        90deg,
+        rgba(18, 12, 10, 0) 0%,
+        #120c0a 50%,
+        #120c0a 100%
+      );
+    }
+  }
   .no-see {
     height: 96px;
     background: linear-gradient(90deg, var(--app-black-3) 85%, #120c0a 100%);
     display: flex;
     align-items: center;
   }
+}
+.list-label {
+  font-size: 16px;
+  margin: 8px 0px;
 }
 .carousel__slide {
   margin-top: 8px;
