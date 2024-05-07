@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div class="recent-chatting people-list-container">
+    <div class="recent-chatting list-container">
       <div class="label-title">
         <div>Недавно общались</div>
         <div class="check-more">
@@ -34,9 +34,60 @@
           <img src="/icons/chevron-right.svg" />
         </div>
       </div>
+      <div class="items-container">
+        <q-avatar v-for="friend in 5" :key="friend" size="76px">
+          <img src="/film_card_mock-image.jpg" />
+        </q-avatar>
+      </div>
     </div>
-    <div class="films-list-container your-films"></div>
-    <div class="films-list-container recent-watching"></div>
+    <div class="list-container your-films">
+      <div class="label-title">
+        <div>Ваши фильмы</div>
+        <div class="check-more">
+          <div>Еще</div>
+          <img src="/icons/chevron-right.svg" />
+        </div>
+      </div>
+      <div class="items-container">
+        <div v-for="film in 5" :key="film" class="film-container">
+          <div
+            class="film-score"
+            :style="
+              4 > 5
+                ? 'background: var(--app-red-1);'
+                : 'background: var(--app-yellow-1)'
+            "
+          >
+            3
+          </div>
+          <img class="film-image" src="/film_card_mock-image.webp" />
+        </div>
+      </div>
+    </div>
+    <div class="list-container recent-watching">
+      <div class="label-title">
+        <div>Недавно смотрели</div>
+        <div class="check-more">
+          <div>Еще</div>
+          <img src="/icons/chevron-right.svg" />
+        </div>
+      </div>
+      <div class="items-container">
+        <div v-for="film in 5" :key="film" class="film-container">
+          <div
+            class="film-score"
+            :style="
+              7 > 5
+                ? 'background: var(--app-red-1);'
+                : 'background: var(--app-yellow-1)'
+            "
+          >
+            7.4
+          </div>
+          <img class="film-image" src="/film_card_mock-image.webp" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -147,16 +198,41 @@ const accountDetails = ref<accointDetal[]>([
       }
     }
   }
-  .people-list-container,
+  .list-container,
   .recent-chatting {
+    overflow-x: hidden;
+    margin-top: 24px;
     .label-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-size: 16px;
       .check-more {
         display: flex;
         color: var(--app-black-3);
         img {
+        }
+      }
+    }
+    .items-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 12px 0px 20px 0px;
+      .film-container {
+        position: relative;
+        .film-score {
+          position: absolute;
+          top: 5%;
+          left: 10%;
+          width: 36px;
+          height: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .film-image {
+          width: 120px;
         }
       }
     }
