@@ -19,6 +19,8 @@
     "@quasar/extras": "^1.16.9",
     "@quasar/quasar-ui-qcalendar": "^4.0.0-beta.16",
     "D": "^1.0.0",
+    "https-proxy-agent": "^7.0.4",
+    "node-fetch": "^3.3.2",
     "nuxt": "^3.11.0",
     "pinia": "^2.1.7",
     "quasar": "^2.15.1",

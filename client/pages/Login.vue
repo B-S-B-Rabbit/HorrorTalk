@@ -34,7 +34,11 @@
         <div class="text-block">
           <a class="link">Забыли пароль?</a>
         </div>
-        <HTButton class="registration-button" label="Войти" />
+        <HTButton
+          class="registration-button"
+          label="Войти"
+          @click="async () => console.log(await useFetch('/api/test'))"
+        />
         <div class="text-block">
           Еще нет аккаунта?
           <nuxt-link to="/registration" class="link"
