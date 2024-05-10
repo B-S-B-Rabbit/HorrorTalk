@@ -1,17 +1,19 @@
 <template>
   <HTInputMain
-    input-style="width: 100px; text-align: center;"
+    :input-style="`width: 100px; text-align: center; color: ${themed ? 'var(--app-white-1)' : ''}`"
     type="text"
     mask="##.##.####"
     :text-validity-check="false"
     :model-value="modelValue"
     placeholder="01.01.2024"
+    :themed="themed"
     :rules="validateDate"
     @update:model-value="updateDate"
   >
     <template #appendIcon>
       <q-icon
-        style="left: -12px; color: #4c4b4b"
+        style="left: -12px"
+        :style="`color: ${iconColor}`"
         :name="mdiCalendarMonthOutline"
       >
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -55,6 +57,14 @@ const props = defineProps({
   defaultDate: {
     type: String,
     default: "",
+  },
+  themed: {
+    type: Boolean,
+    default: false,
+  },
+  iconColor: {
+    type: String,
+    default: "var(--app-black-3)",
   },
 });
 interface Rule {

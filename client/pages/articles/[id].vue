@@ -196,7 +196,6 @@ function selectFilm() {
     transform: scale(1);
   }
 }
-
 </style>
 <style scoped lang="scss">
 .carousel__slide {
