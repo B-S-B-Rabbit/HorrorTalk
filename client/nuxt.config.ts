@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     "vue3-carousel-nuxt",
   ],
   alias: {
-    "vue3-carousel/dist/carousel.js": "vue3-carousel/dist/carousel.es.js",
+    "vue3-carousel/dist/carousel": "vue3-carousel/dist/carousel.es.js",
   },
   css: [`/public/assets/colors.scss`],
   googleFonts: {

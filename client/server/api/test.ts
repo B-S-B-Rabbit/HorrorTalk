@@ -7,7 +7,8 @@ export default defineEventHandler(async (event) => {
     const proxyPort = 3128;
 
     // Target website URL
-    const targetUrl = "https://ident.me/ip";
+    const targetUrl =
+      "https://api.themoviedb.org/3/discover/movie?include_adult=true&with_genres=27";
 
     // Proxy URL
     const proxyUrl = `http://${proxyHost}:${proxyPort}`;
@@ -15,26 +16,39 @@ export default defineEventHandler(async (event) => {
     // Create a new Proxy Agent
     const agent = new HttpsProxyAgent(proxyUrl);
 
-    // Fetch the target website using the proxy agent
-    const req = https.get(targetUrl, { agent }, (res) => {
+    // API request options
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: "Bearer",
+      },
+      agent, // Pass the proxy agent to the request options
+    };
+
+    // Make the API request
+    const req = https.request(targetUrl, requestOptions, (res) => {
       console.log('"response" event!', res.headers);
       let data = "";
 
-      // Обработка данных при получении их от сервера
+      // Data handling when receiving from the server
       res.on("data", (chunk) => {
         data += chunk;
       });
 
-      // Обработка завершения ответа
+      // Handling response completion
       res.on("end", () => {
-        resolve(data); // Разрешение промиса с данными
+        resolve(data); // Resolve the promise with the data
       });
     });
 
-    // Обработка ошибок запроса
+    // Handling request errors
     req.on("error", (error) => {
-      reject(error); // Отклонение промиса с ошибкой
-      console.log("pizdec");
+      reject(error); // Reject the promise with the error
+      console.log("Error occurred:", error);
     });
+
+    // End the request
+    req.end();
   });
 });

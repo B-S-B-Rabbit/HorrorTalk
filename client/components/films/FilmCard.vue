@@ -5,15 +5,17 @@
       :class="[large ? 'large' : '', isOverflowed ? 'overflowed' : '']"
     >
       <div class="film-card-image">
-        <img :src="filmItem.imageSrc" alt="" />
+        <img
+          :src="'data:image/jpeg;base64,' + imageData"
+          alt="Проксированное изображение"
+        />
       </div>
-      <div class="film-score">{{ filmItem.score }}</div>
+      <div class="film-score">{{ filmItem.vote_average.toFixed(1) }}</div>
       <div class="film-card-content">
         <div class="film-card-title">{{ filmItem.title }}</div>
         <div class="film-card-info">
-          <div class="film-text-info">{{ filmItem.author }}</div>
-          <div class="film-text-info">{{ filmItem.year }}</div>
-          <div class="film-text-info">{{ filmItem.country }}</div>
+          <div class="film-text-info">{{ filmItem.release_date }}</div>
+          <div v-if="filmItem.adult" class="film-text-info">18+</div>
         </div>
         <div v-if="large" ref="descriptionRef" class="film-card-description">
           Телефонный звонок раздаётся после просмотра некой загадочной
@@ -38,6 +40,31 @@ const props = defineProps({
 });
 const isOverflowed = ref(false);
 const descriptionRef = ref(null);
+import axios from "axios";
+
+const proxyHost = "35.185.196.38";
+const proxyPort = 3128;
+const imageUrl =
+  "https://image.tmdb.org/t/p/original/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg";
+
+async function loadImageViaProxy() {
+  try {
+    const response = await axios.get(imageUrl, {
+      proxy: {
+        host: proxyHost,
+        port: proxyPort,
+      },
+      responseType: "arraybuffer",
+    });
+
+    return Buffer.from(response.data, "binary").toString("base64");
+  } catch (error) {
+    console.error("Ошибка при загрузке изображения:", error);
+    return null;
+  }
+}
+
+const imageData = await loadImageViaProxy();
 watch(
   () => descriptionRef.value,
   () => {

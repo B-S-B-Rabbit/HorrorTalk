@@ -18,12 +18,14 @@
         </template>
       </HTInputMain>
     </div>
-    <FilmCard
-      v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-      :key="i"
-      :film-item="films[0]"
-      @click="router.push({ path: `/films/${i}` })"
-    ></FilmCard>
+    <div v-if="loading">
+      <FilmCard
+        v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+        :key="i"
+        :film-item="films.results[i - 1]"
+        @click="router.push({ path: `/films/${i}` })"
+      ></FilmCard>
+    </div>
   </div>
 </template>
 
@@ -32,18 +34,19 @@ import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import FilmCard from "~/components/films/FilmCard.vue";
 import { mdiMagnify } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");
-const films = ref([]);
+const films = ref({});
 const router = useRouter();
-films.value = [
-  {
-    imageSrc: "/film_card_mock-image.webp",
-    score: 7.5,
-    title: "Синистер",
-    author: "Стенли Кубрик",
-    year: "2024",
-    country: "Россия",
-  },
-];
+const loading = ref(false);
+onMounted(async () => {
+  setTimeout(async () => {
+    films.value = await useFetch("/api/test");
+    if (films.value) {
+      films.value = JSON.parse(films.value.data);
+      loading.value = true;
+      console.log(films.value);
+    }
+  }, 100);
+});
 </script>
 
 <style lang="scss" scoped>
