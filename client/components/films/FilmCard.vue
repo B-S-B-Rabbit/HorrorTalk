@@ -5,10 +5,7 @@
       :class="[large ? 'large' : '', isOverflowed ? 'overflowed' : '']"
     >
       <div class="film-card-image">
-        <img
-          :src="'data:image/jpeg;base64,' + imageData"
-          alt="Проксированное изображение"
-        />
+        <img :src="imageUrl" alt="Проксированное изображение" />
       </div>
       <div class="film-score">{{ filmItem.vote_average.toFixed(1) }}</div>
       <div class="film-card-content">
@@ -44,27 +41,17 @@ import axios from "axios";
 
 const proxyHost = "35.185.196.38";
 const proxyPort = 3128;
-const imageUrl =
-  "https://image.tmdb.org/t/p/original/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg";
+const imageUrl = ref("");
 
-async function loadImageViaProxy() {
-  try {
-    const response = await axios.get(imageUrl, {
-      proxy: {
-        host: proxyHost,
-        port: proxyPort,
-      },
-      responseType: "arraybuffer",
-    });
-
-    return Buffer.from(response.data, "binary").toString("base64");
-  } catch (error) {
+fetch(`/api/getImage`)
+  .then((response) => response.text())
+  .then((imageDataBase64) => {
+    // Делаем что-то с изображением, например, отображаем его на странице
+    imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
+  })
+  .catch((error) => {
     console.error("Ошибка при загрузке изображения:", error);
-    return null;
-  }
-}
-
-const imageData = await loadImageViaProxy();
+  });
 watch(
   () => descriptionRef.value,
   () => {

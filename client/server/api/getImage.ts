@@ -1,14 +1,16 @@
+// server/api/getImage.ts
 import * as https from "https";
 import { HttpsProxyAgent } from "https-proxy-agent";
+
 export default defineEventHandler(async (event) => {
   return new Promise((resolve, reject) => {
     // Proxy configuration
     const proxyHost = "35.185.196.38";
     const proxyPort = 3128;
 
-    // Target website URL
-    const targetUrl =
-      "https://api.themoviedb.org/3/discover/movie?include_adult=true&with_genres=27";
+    // Target image URL
+    const imageUrl =
+      "https://image.tmdb.org/t/p/original/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg";
 
     // Proxy URL
     const proxyUrl = `http://${proxyHost}:${proxyPort}`;
@@ -16,29 +18,27 @@ export default defineEventHandler(async (event) => {
     // Create a new Proxy Agent
     const agent = new HttpsProxyAgent(proxyUrl);
 
-    // API request options
+    // Image request options
     const requestOptions = {
       method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: "Bearer ",
-      },
       agent, // Pass the proxy agent to the request options
     };
 
-    // Make the API request
-    const req = https.request(targetUrl, requestOptions, (res) => {
+    // Make the image request
+    const req = https.request(imageUrl, requestOptions, (res) => {
       console.log('"response" event!', res.headers);
-      let data = "";
+      let data = Buffer.alloc(0);
 
       // Data handling when receiving from the server
       res.on("data", (chunk) => {
-        data += chunk;
+        data = Buffer.concat([data, chunk]);
       });
 
       // Handling response completion
       res.on("end", () => {
-        resolve(data); // Resolve the promise with the data
+        // Convert image data to Base64
+        const imageDataBase64 = data.toString("base64");
+        resolve(imageDataBase64); // Resolve the promise with the image data as Base64 string
       });
     });
 

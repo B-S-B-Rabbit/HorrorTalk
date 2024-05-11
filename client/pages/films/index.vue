@@ -42,8 +42,8 @@ onMounted(async () => {
     films.value = await useFetch("/api/test");
     if (films.value) {
       films.value = JSON.parse(films.value.data);
-      loading.value = true;
       console.log(films.value);
+      loading.value = true;
     }
   }, 100);
 });
