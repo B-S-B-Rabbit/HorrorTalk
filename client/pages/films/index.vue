@@ -20,8 +20,9 @@
     </div>
     <div v-if="loading">
       <FilmCard
-        v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+        v-for="i in films.results.length"
         :key="i"
+        :pos="i"
         :film-item="films.results[i - 1]"
         @click="router.push({ path: `/films/${i}` })"
       ></FilmCard>
@@ -45,7 +46,7 @@ onMounted(async () => {
       console.log(films.value);
       loading.value = true;
     }
-  }, 100);
+  }, 0);
 });
 </script>
 

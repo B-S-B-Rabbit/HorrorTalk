@@ -5,7 +5,11 @@
       :class="[large ? 'large' : '', isOverflowed ? 'overflowed' : '']"
     >
       <div class="film-card-image">
-        <img :src="imageUrl" alt="Проксированное изображение" />
+        <img
+          v-if="imageLoading"
+          :src="imageUrl"
+          alt="Проксированное изображение"
+        />
       </div>
       <div class="film-score">{{ filmItem.vote_average.toFixed(1) }}</div>
       <div class="film-card-content">
@@ -34,24 +38,36 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  pos: {
+    type: Number,
+    default: 0,
+  },
 });
 const isOverflowed = ref(false);
 const descriptionRef = ref(null);
 import axios from "axios";
-
+console.log(props.filmItem);
 const proxyHost = "35.185.196.38";
 const proxyPort = 3128;
+const imageLoading = ref(false);
 const imageUrl = ref("");
+onMounted(() => {
+  setTimeout(
+    () =>
+      fetch(`/api/getImage/${encodeURIComponent(props.filmItem.poster_path)}`)
+        .then((response) => response.text())
+        .then((imageDataBase64) => {
+          imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
+          console.log("wtf");
+          imageLoading.value = true;
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке изображения:", error);
+        }),
+    100 * props.pos,
+  );
+});
 
-fetch(`/api/getImage`)
-  .then((response) => response.text())
-  .then((imageDataBase64) => {
-    // Делаем что-то с изображением, например, отображаем его на странице
-    imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
-  })
-  .catch((error) => {
-    console.error("Ошибка при загрузке изображения:", error);
-  });
 watch(
   () => descriptionRef.value,
   () => {

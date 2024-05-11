@@ -7,10 +7,10 @@ export default defineEventHandler(async (event) => {
     // Proxy configuration
     const proxyHost = "35.185.196.38";
     const proxyPort = 3128;
-
+    console.log(event.context.params?.imageUrl);
     // Target image URL
     const imageUrl =
-      "https://image.tmdb.org/t/p/original/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg";
+      "https://image.tmdb.org/t/p/original" + event.context.params?.imageUrl;
 
     // Proxy URL
     const proxyUrl = `http://${proxyHost}:${proxyPort}`;

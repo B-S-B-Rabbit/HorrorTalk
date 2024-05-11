@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "vue3-carousel-nuxt",
   ],
+  server: {
+    maxConcurrency: 100,
+  },
   alias: {
     "vue3-carousel/dist/carousel": "vue3-carousel/dist/carousel.es.js",
   },
