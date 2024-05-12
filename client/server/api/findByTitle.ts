@@ -5,13 +5,13 @@ export default defineEventHandler(async (event) => {
     // Proxy configuration
     const proxyHost = "35.185.196.38";
     const proxyPort = 3128;
+    const query = getQuery(event);
     // Target website URL
     const targetUrl =
-      "https://api.themoviedb.org/3/discover/movie?include_adult=true&with_genres=27";
-
+      "https://api.themoviedb.org/3/search/movie?include_adult=true&language=en-US&page=1&" +
+      `query=${query.queryString}`;
     // Proxy URL
     const proxyUrl = `http://${proxyHost}:${proxyPort}`;
-
     // Create a new Proxy Agent
     const agent = new HttpsProxyAgent(proxyUrl);
 

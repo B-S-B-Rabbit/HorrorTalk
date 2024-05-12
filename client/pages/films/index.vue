@@ -8,6 +8,7 @@
         margin-text-input
         prepend
         placeholder="Введите название фильма"
+        @update:model-value="searchFilms"
       >
         <template #prependIcon>
           <div>
@@ -20,11 +21,11 @@
     </div>
     <div v-if="loading">
       <FilmCard
-        v-for="i in films.results.length"
-        :key="i"
+        v-for="i in films.length"
+        :key="films[i - 1].id"
         :pos="i"
-        :film-item="films.results[i - 1]"
-        @click="router.push({ path: `/films/${i}` })"
+        :film-item="films[i - 1]"
+        @click="router.push({ path: `/films/${films[i - 1].id}` })"
       ></FilmCard>
     </div>
   </div>
@@ -38,16 +39,37 @@ const searchValue = ref("");
 const films = ref({});
 const router = useRouter();
 const loading = ref(false);
+async function getFilms() {
+  films.value = await useFetch("/api/test");
+  if (films.value) {
+    films.value = JSON.parse(films.value.data).results;
+    console.log(films.value);
+    loading.value = true;
+  }
+}
 onMounted(async () => {
-  setTimeout(async () => {
-    films.value = await useFetch("/api/test");
-    if (films.value) {
-      films.value = JSON.parse(films.value.data);
-      console.log(films.value);
-      loading.value = true;
-    }
-  }, 0);
+  setTimeout(getFilms, 0);
 });
+function searchFilms(val: string) {
+  if (val) {
+    setTimeout(async () => {
+      // Выполняем запрос с параметром val
+      films.value = await useFetch("/api/findByTitle", {
+        params: { queryString: val },
+      });
+
+      if (films.value) {
+        films.value = JSON.parse(films.value.data).results.filter((item) =>
+          item.genre_ids.includes(27),
+        );
+        console.log(films.value);
+        loading.value = true;
+      }
+    }, 0);
+  } else {
+    setTimeout(getFilms, 0);
+  }
+}
 </script>
 
 <style lang="scss" scoped>

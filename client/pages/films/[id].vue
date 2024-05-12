@@ -117,7 +117,7 @@
     <div class="alike-films">
       <div class="subtitle-text">Похожие фильмы</div>
       <div>
-        <Carousel :items-to-show="3" :wrap-around="true" :transition="500">
+        <!-- <Carousel :items-to-show="3" :wrap-around="true" :transition="500">
           <Slide v-for="slide in 10" :key="slide">
             <div class="carousel__item">
               <div class="carousel-image">
@@ -126,7 +126,7 @@
               <div>Такой-то фильм</div>
             </div>
           </Slide>
-        </Carousel>
+        </Carousel> -->
       </div>
     </div>
     <div class="comments-block">
