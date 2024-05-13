@@ -36,7 +36,7 @@ import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import FilmCard from "~/components/films/FilmCard.vue";
 import { mdiMagnify } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");
-const films = ref({});
+const films = ref([]);
 const router = useRouter();
 const loading = ref(false);
 async function getFilms() {
@@ -50,12 +50,12 @@ async function getFilms() {
 onMounted(async () => {
   setTimeout(getFilms, 0);
 });
-function searchFilms(val: string) {
-  if (val) {
+function searchFilms() {
+  if (searchValue.value) {
     setTimeout(async () => {
       // Выполняем запрос с параметром val
       films.value = await useFetch("/api/findByTitle", {
-        params: { queryString: val },
+        params: { queryString: searchValue.value },
       });
 
       if (films.value) {

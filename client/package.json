@@ -25,9 +25,11 @@
     "pinia": "^2.1.7",
     "quasar": "^2.15.1",
     "sass-loader": "^14.1.1",
+    "typescript": "^5.4.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "vue3-carousel-nuxt": "^1.1.1"
+    "vue3-carousel-nuxt": "^1.1.1",
+    "vue3-youtube": "^0.1.9"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",

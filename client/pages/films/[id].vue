@@ -1,22 +1,55 @@
 <template>
   <div class="film-container">
     <div class="film-poster">
-      <img src="/film_card_mock-image.webp" alt="" />
+      <img
+        v-if="imageLoading"
+        :src="mainImageUrl"
+        alt="Проксированное изображение"
+      />
     </div>
     <div class="film-info">
-      <div class="film-info-title subtitle-text">Название фильма</div>
+      <div class="film-info-title subtitle-text">
+        {{ film ? film.title : "loading" }}
+      </div>
       <div style="display: flex">
-        <div class="film-info-genre">Триллер</div>
-        <div class="film-info-year">2025</div>
+        <div class="film-info-genre">
+          {{
+            film ? film.genres.map((item) => item.name).join(", ") : "loading"
+          }}
+        </div>
+        <div class="dot-divider">•</div>
+        <div class="film-info-year">
+          {{ film ? format(new Date(film?.release_date), "P") : "loading" }}
+        </div>
+        <div class="dot-divider">•</div>
+        <div class="film-info-runtime">
+          {{
+            film
+              ? format(
+                  new Date(
+                    0,
+                    0,
+                    0,
+                    Math.floor(film.runtime / 60),
+                    film.runtime % 60,
+                  ),
+                  "H 'h' m 'm'",
+                )
+              : "loading"
+          }}
+        </div>
+      </div>
+      <div class="film-info-tagline">
+        {{ film ? film.tagline : "loading" }}
       </div>
     </div>
     <div class="film-score">
-      <div class="film-score-value">7</div>
+      <div class="film-score-value">{{ film?.vote_average.toFixed(1) }}</div>
       <div class="film-score-stars">
         <img
           v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
           :key="i"
-          :style="`filter: ${7 >= i ? 'var(--app-yellow-star-filter);' : 'var(--app-default-star-filter)'}`"
+          :style="`filter: ${film?.vote_average.toFixed(0) >= i ? 'var(--app-yellow-star-filter);' : 'var(--app-default-star-filter)'}`"
           src="/icons/star_score.svg"
           alt=""
         />
@@ -64,7 +97,26 @@
     </div>
     <div class="film-trailer">
       <div class="subtitle-text">Трейлер</div>
-      <div class="film-trailer-video"></div>
+      <div class="film-trailer-video">
+        <!-- <iframe
+          v-if="trailerId"
+          :src="`https://www.youtube.com/embed/${trailerId}?autoplay=1`"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          width="100%"
+          height="240px"
+        ></iframe> -->
+        <YouTube
+          v-if="trailerId"
+          ref="youtube"
+          :src="`https://www.youtube.com/embed/${trailerId}?autoplay=1`"
+          height="240px"
+          width="100%"
+          :vars="{ rel: 0, modestbranding: 1, controls: 2 }"
+        />
+        <div v-else>Трейлер недоступен</div>
+      </div>
     </div>
     <div class="detail-info">
       <div
@@ -76,33 +128,36 @@
       </div>
       <Transition name="slide-down">
         <div v-if="showDetails">
-          <div class="subtitle-text">Режиссёр</div>
-          <div>Имя режиссера</div>
-          <div class="subtitle-text">Актёры</div>
-          <div class="actors-block">
-            <div
-              v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-              :key="i"
-              class="actor-block"
-            >
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/avatar.png" />
-              </q-avatar>
-              <div style="text-align: center">
-                Matthew<br />
-                McConaughey
-              </div>
-            </div>
+          <div class="subtitle-text">Режиссеры и сценаристы</div>
+          <div>
+            {{
+              [
+                ...new Set(
+                  filmCredits.crew
+                    .filter(
+                      (crewMember) =>
+                        crewMember.known_for_department === "Directing" ||
+                        crewMember.known_for_department === "Writing",
+                    )
+                    .map((crewMember) => crewMember.name),
+                ),
+              ].join(", ")
+            }}
           </div>
+          <div class="subtitle-text">Актёры</div>
+          <Carousel :items-to-show="3" :wrap-around="true">
+            <Slide v-for="actor in filmCredits.cast" :key="actor.id">
+              <div class="carousel__actor-item">
+                <q-avatar size="56px">
+                  <img :src="actor.proxiedPhoto" />
+                </q-avatar>
+                <div style="text-align: center">{{ actor.name }}</div>
+              </div>
+            </Slide>
+          </Carousel>
           <div class="subtitle-text">Краткое описание</div>
           <div>
-            Дороги в Эквадоре практически идеальные, хотя населенные пункты
-            выглядят очень бедно. На дорогах много интересных машин, например
-            очень много грузовиков - древних Фордов, которые я никогда раньше не
-            видел. А еще несколько раз на глаза попадались старенькие Жигули :)
-            А еще если кого-то обгоняешь и есть встречная машина, она
-            обязательно включает фары. На больших машинах - грузовиках и
-            автобусах, обязательно красуется
+            {{ film?.overview }}
           </div>
         </div>
       </Transition>
@@ -117,16 +172,19 @@
     <div class="alike-films">
       <div class="subtitle-text">Похожие фильмы</div>
       <div>
-        <!-- <Carousel :items-to-show="3" :wrap-around="true" :transition="500">
-          <Slide v-for="slide in 10" :key="slide">
-            <div class="carousel__item">
+        <Carousel :items-to-show="3" :wrap-around="true">
+          <Slide v-for="slide in similarFilms" :key="slide">
+            <div
+              class="carousel__item"
+              @click="navigateTo(`/films/${slide.id}`)"
+            >
               <div class="carousel-image">
-                <img src="/film_card_mock-image.webp" alt="" />
+                <img :src="slide.proxiedPhoto" alt="" />
               </div>
-              <div>Такой-то фильм</div>
+              <div>{{ slide.title }}</div>
             </div>
           </Slide>
-        </Carousel> -->
+        </Carousel>
       </div>
     </div>
     <div class="comments-block">
@@ -143,7 +201,7 @@
           v-if="showSendBitton || reviewText.length > 10"
           class="send-button"
         >
-          <HTButton icon-button :icon="mdiSend" @click="sendJson"></HTButton>
+          <HTButton icon-button :icon="mdiSend" @click=""></HTButton>
         </div>
       </div>
       <div class="comments-block-reviews">
@@ -217,6 +275,11 @@ import {
   mdiArrowTopRight,
   mdiSend,
 } from "@quasar/extras/mdi-v7";
+import { useRoute } from "vue-router";
+import { format } from "date-fns";
+import YouTube from "vue3-youtube";
+const route = useRoute();
+const loading = ref(false);
 const scores = ref([
   { text: "Шедевр!", selected: false, key: 10 },
   { text: "Отлично", selected: false, key: 9 },
@@ -236,10 +299,42 @@ const bookmarks = ref([
   { text: "В планах", selected: false },
   { text: "Просмотрено", selected: false },
   { text: "Брошено", selected: false },
-  { text: "Фавориты", selected: false },
-  { text: "Мой список", selected: false },
+  { text: "Избранное", selected: false },
 ]);
+const film = ref();
 const reviewText = ref("");
+const mainImageUrl = ref();
+const imageLoading = ref(false);
+function getFilmPhoto() {
+  setTimeout(
+    () =>
+      fetch(`/api/getImage/${encodeURIComponent(film.value.poster_path)}`)
+        .then((response) => response.text())
+        .then((imageDataBase64) => {
+          mainImageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
+          console.log("wtf");
+          imageLoading.value = true;
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке изображения:", error);
+        }),
+    100,
+  );
+}
+function getProxiedPhotoUrl(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fetch(`/api/getImage/${encodeURIComponent(url)}`)
+      .then((response) => response.text())
+      .then((imageDataBase64) => {
+        const proxiedUrl = "data:image/jpeg;base64," + imageDataBase64;
+        resolve(proxiedUrl);
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке изображения:", error);
+        reject(error);
+      });
+  });
+}
 const showDetails = ref(false);
 function updateSelected(item, allItems, multiple = false) {
   if (!multiple) {
@@ -258,35 +353,102 @@ function updateSelected(item, allItems, multiple = false) {
     });
   }
 }
-async function sendJson() {
-  const jsonData = {
-    name: "John Doe",
-    age: 30,
-    email: "john.doe@example.com",
-    // Добавьте любые другие данные, которые вы хотите отправить
-  };
+const filmCredits = ref();
+function getFilmCredits() {
+  setTimeout(async () => {
+    filmCredits.value = await useFetch("/api/getFilmCredits", {
+      params: { movieId: route.params.id },
+    });
 
-  try {
-    const response: any = await $fetch(
-      "http://192.168.1.72:5000/receive_json",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jsonData),
-      },
-    );
-
-    if (response.ok) {
-      console.log("JSON отправлен успешно!");
-    } else {
-      console.error("Произошла ошибка при отправке JSON:", response.status);
+    if (filmCredits.value) {
+      filmCredits.value = JSON.parse(filmCredits.value.data);
+      filmCredits.value.cast.forEach((item, ind) => {
+        setTimeout(
+          () =>
+            getProxiedPhotoUrl(item.profile_path)
+              .then((proxiedUrl) => {
+                item.proxiedPhoto = proxiedUrl;
+                // Вы можете использовать proxiedUrl здесь
+              })
+              .catch((error) => {
+                console.error("Ошибка:", error);
+              }),
+          100 * ind,
+        );
+      });
+      console.log(filmCredits.value);
     }
-  } catch (error) {
-    console.error("Произошла ошибка при отправке JSON:", error);
-  }
+  }, 0);
 }
+const filmVideos = ref();
+const trailerId = ref();
+function getFilmVideo() {
+  setTimeout(async () => {
+    filmVideos.value = await useFetch("/api/getFilmVideos", {
+      params: { movieId: route.params.id },
+    });
+
+    if (filmVideos.value) {
+      filmVideos.value = JSON.parse(filmVideos.value.data);
+      console.log(filmVideos.value);
+      const trailer = filmVideos.value.results.find(
+        (video) => video.site === "YouTube" && video.type === "Trailer",
+      );
+      if (trailer) {
+        trailerId.value = trailer.key;
+      }
+    }
+  }, 0);
+}
+const similarFilms = ref();
+async function getSimilarFilms() {
+  setTimeout(async () => {
+    similarFilms.value = await useFetch("/api/getSimilarFilms", {
+      params: { movieId: route.params.id },
+    });
+
+    if (similarFilms.value) {
+      similarFilms.value = JSON.parse(similarFilms.value.data).results.filter(
+        (item) => item.genre_ids.includes(27),
+      );
+      similarFilms.value.forEach((item, ind) => {
+        setTimeout(
+          () =>
+            getProxiedPhotoUrl(item.poster_path)
+              .then((proxiedUrl) => {
+                item.proxiedPhoto = proxiedUrl;
+                // Вы можете использовать proxiedUrl здесь
+              })
+              .catch((error) => {
+                console.error("Ошибка:", error);
+              }),
+          100 * ind,
+        );
+      });
+      console.log(similarFilms.value, "that is milirs");
+    }
+  }, 0);
+}
+function getFilm() {
+  setTimeout(async () => {
+    film.value = await useFetch("/api/getFilmById", {
+      params: { movieId: route.params.id },
+    });
+
+    if (film.value) {
+      film.value = JSON.parse(film.value.data);
+      console.log(film.value);
+      getFilmPhoto();
+      getFilmCredits();
+      getSimilarFilms();
+      getFilmVideo();
+      loading.value = true;
+    }
+  }, 0);
+}
+onMounted(async () => {
+  setTimeout(getFilm, 0);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -297,6 +459,7 @@ async function sendJson() {
     font-size: 18px;
     margin: 12px 0px 8px 0px;
   }
+
   .film-poster {
     img {
       width: 100%;
@@ -309,10 +472,33 @@ async function sendJson() {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
-    &-genre::after {
-      content: "•";
-      margin: 4px;
+    text-align: center;
+    font-size: 14px;
+    &-title {
+      font-size: 28px;
+      font-family: "Permanent Marker";
+      color: var(--app-red-1);
+    }
+    &-genre,
+    &-year,
+    &-runtime {
+      display: flex;
+      flex: 1 1 0;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .dot-divider {
+      margin: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    &-tagline {
+      margin-top: 8px;
+      font-size: 28px;
+      font-family: "Jersey 10 Charted";
+      color: var(--app-red-1);
     }
   }
   .film-score {
@@ -360,7 +546,6 @@ async function sendJson() {
     }
   }
   .film-trailer {
-    padding: 0px 16px;
     margin-top: 16px;
     &-head {
       font-size: 16px;
@@ -368,8 +553,7 @@ async function sendJson() {
     }
     &-video {
       width: 100%;
-      height: 120px;
-      background: var(--app-black-5);
+      height: auto;
     }
   }
   .detail-info {
@@ -452,39 +636,45 @@ async function sendJson() {
 }
 .carousel__viewport {
   perspective: 2000px;
+  .carousel__track {
+    li {
+      display: flex;
+      align-items: start;
+    }
+  }
 }
 
-.carousel__track {
-  transform-style: preserve-3d;
-}
+// .carousel__track {
+//   transform-style: preserve-3d;
+// }
 
-.carousel__slide--sliding {
-  transition: 0.5s;
-}
+// .carousel__slide--sliding {
+//   transition: 0.5s;
+// }
 
-.carousel__slide {
-  opacity: 0.9;
-  transform: rotateY(-20deg) scale(0.9);
-}
+// .carousel__slide {
+//   opacity: 0.9;
+//   transform: rotateY(-20deg) scale(0.9);
+// }
 
-.carousel__slide--active ~ .carousel__slide {
-  transform: rotateY(20deg) scale(0.9);
-}
+// .carousel__slide--active ~ .carousel__slide {
+//   transform: rotateY(20deg) scale(0.9);
+// }
 
-.carousel__slide--prev {
-  opacity: 1;
-  transform: rotateY(-10deg) scale(0.95);
-}
+// .carousel__slide--prev {
+//   opacity: 1;
+//   transform: rotateY(-10deg) scale(0.95);
+// }
 
-.carousel__slide--next {
-  opacity: 1;
-  transform: rotateY(10deg) scale(0.95);
-}
+// .carousel__slide--next {
+//   opacity: 1;
+//   transform: rotateY(10deg) scale(0.95);
+// }
 
-.carousel__slide--active {
-  opacity: 1;
-  transform: rotateY(0) scale(1.1);
-}
+// .carousel__slide--active {
+//   opacity: 1;
+//   transform: rotateY(0) scale(1.1);
+// }
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: transform 0.3s;
