@@ -37,7 +37,7 @@
         <HTButton
           class="registration-button"
           label="Войти"
-          @click="async () => console.log(await useFetch('/api/test'))"
+          @click="navigateTo('/')"
         />
         <div class="text-block">
           Еще нет аккаунта?

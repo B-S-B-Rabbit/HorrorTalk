@@ -18,6 +18,14 @@ export default defineNuxtConfig({
       "Permanent Marker": true,
     },
   },
+  runtimeConfig: {
+    public: {},
+    tmdbUrl: process.env.TMDB_URL,
+    tmdbApiVer: process.env.TMDB_API_VER,
+    tmdbApiKey: process.env.TMDB_API_KEY,
+    proxyUrl: process.env.PROXY_URL,
+    proxyPort: process.env.PROXY_PORT,
+  },
   quasar: {
     config: {
       brand: {

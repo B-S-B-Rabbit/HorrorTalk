@@ -1,7 +1,11 @@
 <template>
   <div class="main-articles-container">
     <div class="button-create">
-      <HTButton :icon="mdiPlus" label="Написать статью"></HTButton>
+      <HTButton
+        :icon="mdiPlus"
+        label="Написать статью"
+        @click="navigateTo('/articles/add')"
+      ></HTButton>
     </div>
     <div class="input-search">
       <HTInputMain
@@ -39,7 +43,11 @@
       </HTButtonDropdown>
     </div>
     <div class="articles-list">
-      <ArticleCard :film-item="films[0]"> </ArticleCard>
+      <ArticleCard
+        :film-item="films[0]"
+        @click="navigateTo(`/articles/${1234}`)"
+      >
+      </ArticleCard>
     </div>
   </div>
 </template>

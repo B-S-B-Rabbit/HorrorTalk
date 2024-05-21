@@ -57,8 +57,15 @@
       <InputsHTSwitch v-model="reccommend" size="lg"></InputsHTSwitch>
     </div>
     <div class="footer-buttons">
-      <HTButton label="Сохранить изменения"></HTButton>
-      <HTButton label="Отмена" type="secondary"></HTButton>
+      <HTButton
+        label="Сохранить изменения"
+        @click="navigateTo('/profile')"
+      ></HTButton>
+      <HTButton
+        label="Отмена"
+        type="secondary"
+        @click="navigateTo('/profile')"
+      ></HTButton>
     </div>
   </div>
 </template>
