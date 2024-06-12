@@ -66,40 +66,42 @@ const reviewBlocks = ref([]);
 const router = useRouter();
 const reviewText = ref("");
 const selectedFilm = ref("");
-const filmss = ref([
-  {
-    imageSrc: "/film_card_mock-image.webp",
-    score: 7.5,
-    title: "Синистер",
-    author: "Стенли Кубрик",
-    year: "2024",
-    country: "Россия",
-  },
-  {
-    imageSrc: "/film_card_mock-image.webp",
-    score: 7.5,
-    title: "Синистер",
-    author: "Стенли Кубрик",
-    year: "2024",
-    country: "Россия",
-  },
-]);
+const filmss = ref([]);
+function getProxiedPhotoUrl(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fetch(`/api/getImage/${encodeURIComponent(url)}`)
+      .then((response) => response.text())
+      .then((imageDataBase64) => {
+        const proxiedUrl = "data:image/jpeg;base64," + imageDataBase64;
+        resolve(proxiedUrl);
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке изображения:", error);
+        reject(error);
+      });
+  });
+}
+function getFilmsById() {
+  setTimeout(async () => {
+    film.value = await useFetch("/api/getFilmById", {
+      params: { movieId: route.params.id },
+    });
 
-const films = ref([
-  "фильм1",
-  "фильм2",
-  "фильм3",
-  "фиaaaaaaaaaaaaaльм4",
-  "фильм5",
-  "фильм6",
-  "фильм7",
-  "фильм8",
+    if (film.value) {
+      film.value = JSON.parse(film.value.data);
+      loading.value = true;
+    }
+  }, 0);
+}
+const filmsId = ref([
+  940721, 1087388, 1096197, 1111873, 1064178, 760104, 1041613, 348,
 ]);
 const openDialog = ref(false);
 const articleScore = ref(0);
 function cleanSelected() {
   selectedFilm.value = "";
 }
+function getArticleFilms() {}
 function addReviewBlock() {
   if (selectedFilm.value) {
     filmss.value.push({

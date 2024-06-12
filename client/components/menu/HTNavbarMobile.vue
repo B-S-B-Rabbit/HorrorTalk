@@ -21,6 +21,7 @@
           size="lg"
           style="width: 40px; height: 40px"
           :icon="mdiAccountCircleOutline"
+          @click="navigateTo('/profile')"
         />
       </q-toolbar>
     </q-header>
@@ -69,6 +70,7 @@ const toggleActive = () => {
 .nav-header {
   border-bottom: 1px var(--app-black-3) solid;
   z-index: 10001;
+  position: fixed;
 }
 .menu-container {
   position: fixed;

@@ -9,7 +9,10 @@
       <div class="account-detail">
         <div class="account-detail--title">
           <div class="title-text">Подробная информация</div>
-          <div class="account-details-edit">
+          <div
+            class="account-details-edit"
+            @click="navigateTo('/profile/edit')"
+          >
             <q-icon class="edit-icon" :name="mdiPencil"></q-icon>
             <div class="edit-text">Изменить</div>
           </div>

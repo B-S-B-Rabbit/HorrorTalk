@@ -15,7 +15,7 @@
     </div>
     <div>
       <div class="main-label">Содержание:</div>
-      <div v-for="item in filmss" :key="item.title">
+      <div v-for="(item, ind) in filmss" :key="item.id">
         <div style="position: relative">
           <FilmsFilmCard
             :film-item="item"
@@ -26,7 +26,7 @@
           <q-icon
             class="replace-film-label"
             :name="mdiPencil"
-            @click.stop="selectFilm"
+            @click.stop="(event) => selectFilm(ind)"
           ></q-icon>
         </div>
         <div class="review-text">
@@ -37,7 +37,7 @@
         themed="var(--app-dark-1)"
         :icon="mdiPlus"
         label="Добавить фильм"
-        @click="selectFilm"
+        @click="(event) => selectFilm(-1)"
       ></HTButton>
     </div>
     <HTDialog
@@ -47,9 +47,20 @@
     >
       <template #main>
         <InputsHTSelect
+          ref="filmsSelector"
+          :key="upKey"
           v-model="selectedFilm"
           class="films-selector"
-          :options="films"
+          :options="
+            films.map((item) => {
+              return {
+                label: item.title,
+                value: item.id,
+              };
+            })
+          "
+          @input-change="changeSearchValue"
+          @select-item="(val) => (selectedFilmId = val)"
         ></InputsHTSelect>
       </template>
     </HTDialog>
@@ -65,47 +76,126 @@ const reviewBlocks = ref([]);
 const router = useRouter();
 const reviewText = ref("");
 const selectedFilm = ref("");
-const filmss = ref([
-  {
-    imageSrc: "/film_card_mock-image.webp",
-    score: 7.5,
-    title: "Синистер",
-    author: "Стенли Кубрик",
-    year: "2024",
-    country: "Россия",
-  },
-]);
-
-const films = ref([
-  "фильм1",
-  "фильм2",
-  "фильм3",
-  "фиaaaaaaaaaaaaaльм4",
-  "фильм5",
-  "фильм6",
-  "фильм7",
-  "фильм8",
-]);
+const selectedFilmId = ref(0);
+const filmss = ref([]);
+const searchFilm = ref("");
+const films = ref([]);
 const openDialog = ref(false);
+const upKey = ref(0);
+const filmsSelector = ref(null);
+const currentReplacedNumber = ref(-1);
 function cleanSelected() {
   selectedFilm.value = "";
 }
-function addReviewBlock() {
-  if (selectedFilm.value) {
-    filmss.value.push({
-      imageSrc: "/film_card_mock-image.webp",
-      score: 7.5,
-      title: "Синистер",
-      author: "Стенли Кубрик",
-      year: "2024",
-      country: "Россия",
-    });
-    selectedFilm.value = "";
+
+async function getFilms() {
+  films.value = await useFetch("/api/getFilms", {
+    params: {
+      page: 1,
+    },
+  });
+  if (films.value) {
+    films.value = JSON.parse(films.value.data).results;
+    upKey.value++;
+    console.log(films.value);
   }
 }
-function selectFilm() {
+
+function changeSearchValue(val: string) {
+  console.log(val);
+  selectedFilm.value = val;
+}
+
+function searchFilms() {
+  console.log("I WRITING", selectedFilm.value);
+  if (selectedFilm.value) {
+    setTimeout(async () => {
+      // Выполняем запрос с параметром val
+      films.value = await useFetch("/api/findByTitle", {
+        params: { queryString: selectedFilm.value },
+      });
+
+      if (films.value) {
+        films.value = JSON.parse(films.value.data).results?.filter((item) => {
+          console.log("FILM ITEM", item);
+          return Array.isArray(item.genre_ids)
+            ? item.genre_ids.includes(27)
+            : false;
+        });
+        console.log("FILMS FROM RESPONSE", films.value);
+        upKey.value++;
+        console.log(films.value);
+
+        // Открыть список селекта после обновления данных
+        nextTick(() => {
+          if (filmsSelector.value) {
+            filmsSelector.value.$el.click();
+            clearTextSelection();
+          }
+        });
+      }
+    }, 0);
+  } else {
+    setTimeout(getFilms, 0);
+  }
+}
+function clearTextSelection() {
+  if (window.getSelection) {
+    const selection = window.getSelection();
+    if (selection && selection.empty) {
+      selection.empty(); // Chrome
+    } else if (selection && selection.removeAllRanges) {
+      selection.removeAllRanges(); // Firefox
+    }
+  } else if (document.selection) {
+    const selection = document.selection;
+    if (selection && selection.empty) {
+      selection.empty(); // IE
+    }
+  }
+}
+function addReviewBlock() {
+  if (selectedFilmId.value) {
+    if (currentReplacedNumber.value !== -1) {
+      filmss.value[currentReplacedNumber.value] = films.value?.filter(
+        (item) => item.id == selectedFilmId.value,
+      )[0];
+    } else {
+      filmss.value.push(
+        films.value?.filter((item) => item.id == selectedFilmId.value)[0],
+      );
+    }
+    selectedFilmId.value = 0;
+    selectedFilm.value = "";
+    currentReplacedNumber.value = -1;
+  }
+}
+
+function selectFilm(replacedNumber = -1) {
+  console.log(
+    "replaced number, current",
+    replacedNumber,
+    currentReplacedNumber.value,
+  );
+  if (replacedNumber !== -1) {
+    currentReplacedNumber.value = replacedNumber;
+  }
   openDialog.value = true;
 }
+const timeout = ref();
+watch(
+  () => selectedFilm.value,
+  () => {
+    if (timeout) {
+      clearTimeout(timeout.value);
+    }
+    timeout.value = setTimeout(() => searchFilms(), 3000);
+  },
+);
+
+onMounted(async () => {
+  setTimeout(getFilms, 0);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -141,5 +231,7 @@ function selectFilm() {
   height: 30px;
   z-index: 1000;
 }
+.no-pointer-events {
+  pointer-events: none;
+}
 </style>
-<style></style>

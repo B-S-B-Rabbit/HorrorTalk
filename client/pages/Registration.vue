@@ -60,7 +60,11 @@
           <a class="link">Правилами использования</a> и
           <a class="link">Политикой конфиденциальности</a>
         </div>
-        <HTButton class="registration-button" label="Зарегистрироваться" />
+        <HTButton
+          class="registration-button"
+          label="Зарегистрироваться"
+          @click="navigateTo('/')"
+        />
         <div class="text-block">
           Уже есть аккаунт?
           <nuxt-link to="/login" class="link">Войти</nuxt-link>

@@ -15,22 +15,30 @@
         </ul>
       </div>
       <div class="suggest-register-buttons">
-        <HTButton label="Создать аккаунт" themed="var(--app-red-1)"></HTButton>
-        <HTButton label="Вход" themed="var(--app-dark-1)"></HTButton>
+        <HTButton
+          label="Создать аккаунт"
+          themed="var(--app-red-1)"
+          @click="navigateTo('/registration')"
+        ></HTButton>
+        <HTButton
+          label="Вход"
+          themed="var(--app-dark-1)"
+          @click="navigateTo('/login')"
+        ></HTButton>
       </div>
     </div>
-    <div class="big-carousel-list">
+    <div v-if="loading" class="big-carousel-list">
       <div style="position: relative; top: 12px; left: 5px" class="list-label">
         Популярно сегодня
       </div>
       <div>
         <Carousel :items-to-show="1" :wrap-around="true" :transition="500">
-          <Slide v-for="slide in 10" :key="slide">
-            <div class="carousel__item">
+          <Slide v-for="(film, ind) in trendingFilms" :key="ind">
+            <div class="carousel__item" @click="navigateTo(`films/${film.id}`)">
               <div class="carousel-image">
-                <img src="/film_card_mock-image.webp" alt="" />
+                <img :src="film.proxiedPhoto" alt="" />
               </div>
-              <div>Такой-то фильм</div>
+              <div>{{ film.title }}</div>
             </div>
           </Slide>
           <template #addons>
@@ -103,6 +111,7 @@
 import { mdiClose, mdiChevronRight } from "@quasar/extras/mdi-v6";
 import ArticleCard from "~/components/articles/ArticleCard.vue";
 const films = ref([]);
+const trendingFilms = ref([]);
 films.value = [
   {
     imageSrc: "/film_card_mock-image.webp",
@@ -113,6 +122,49 @@ films.value = [
     country: "Россия",
   },
 ];
+const loading = ref(false);
+function getProxiedPhotoUrl(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fetch(`/api/getImage/${encodeURIComponent(url)}`)
+      .then((response) => response.text())
+      .then((imageDataBase64) => {
+        const proxiedUrl = "data:image/jpeg;base64," + imageDataBase64;
+        resolve(proxiedUrl);
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке изображения:", error);
+        reject(error);
+      });
+  });
+}
+async function getTrendingFilms() {
+  trendingFilms.value = await useFetch("/api/getTrendingMovies");
+  if (trendingFilms.value) {
+    trendingFilms.value = JSON.parse(trendingFilms.value.data);
+    trendingFilms.value = trendingFilms.value.results.filter((item) =>
+      item.genre_ids.includes(27),
+    );
+    console.log(trendingFilms.value);
+    trendingFilms.value.forEach((item, ind) => {
+      setTimeout(
+        () =>
+          getProxiedPhotoUrl(item.poster_path)
+            .then((proxiedUrl) => {
+              item.proxiedPhoto = proxiedUrl;
+            })
+            .catch((error) => {
+              console.error("Ошибка:", error);
+            }),
+        100 * ind,
+      );
+    });
+    console.log(trendingFilms.value);
+    loading.value = true;
+  }
+}
+onMounted(() => {
+  setTimeout(getTrendingFilms, 0);
+});
 </script>
 
 <style lang="scss">

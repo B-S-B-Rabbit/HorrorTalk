@@ -5,15 +5,18 @@
       :class="[large ? 'large' : '', isOverflowed ? 'overflowed' : '']"
     >
       <div class="film-card-image">
-        <img :src="filmItem.imageSrc" alt="" />
+        <img
+          v-if="imageLoading"
+          :src="imageUrl"
+          alt="Проксированное изображение"
+        />
       </div>
-      <div class="film-score">{{ filmItem.score }}</div>
+      <div class="film-score">{{ filmItem.vote_average.toFixed(1) }}</div>
       <div class="film-card-content">
         <div class="film-card-title">{{ filmItem.title }}</div>
         <div class="film-card-info">
-          <div class="film-text-info">{{ filmItem.author }}</div>
-          <div class="film-text-info">{{ filmItem.year }}</div>
-          <div class="film-text-info">{{ filmItem.country }}</div>
+          <div class="film-text-info">{{ filmItem.release_date }}</div>
+          <div v-if="filmItem.adult" class="film-text-info">18+</div>
         </div>
         <div v-if="large" ref="descriptionRef" class="film-card-description">
           Телефонный звонок раздаётся после просмотра некой загадочной
@@ -35,9 +38,36 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  pos: {
+    type: Number,
+    default: 0,
+  },
 });
 const isOverflowed = ref(false);
 const descriptionRef = ref(null);
+import axios from "axios";
+console.log(props.filmItem);
+const proxyHost = "35.185.196.38";
+const proxyPort = 3128;
+const imageLoading = ref(false);
+const imageUrl = ref("");
+onMounted(() => {
+  setTimeout(
+    () =>
+      fetch(`/api/getImage/${encodeURIComponent(props.filmItem.poster_path)}`)
+        .then((response) => response.text())
+        .then((imageDataBase64) => {
+          imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
+          console.log("wtf");
+          imageLoading.value = true;
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке изображения:", error);
+        }),
+    100 * props.pos,
+  );
+});
+
 watch(
   () => descriptionRef.value,
   () => {

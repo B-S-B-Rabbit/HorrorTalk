@@ -8,13 +8,23 @@ export default defineNuxtConfig({
     "vue3-carousel-nuxt",
   ],
   alias: {
-    "vue3-carousel/dist/carousel.js": "vue3-carousel/dist/carousel.es.js",
+    "vue3-carousel/dist/carousel": "vue3-carousel/dist/carousel.es.js",
   },
   css: [`/public/assets/colors.scss`],
   googleFonts: {
     families: {
       Inter: true, // Это добавит шрифт Inter
+      "Jersey 10 Charted": true,
+      "Permanent Marker": true,
     },
+  },
+  runtimeConfig: {
+    public: {},
+    tmdbUrl: process.env.TMDB_URL,
+    tmdbApiVer: process.env.TMDB_API_VER,
+    tmdbApiKey: process.env.TMDB_API_KEY,
+    proxyUrl: process.env.PROXY_URL,
+    proxyPort: process.env.PROXY_PORT,
   },
   quasar: {
     config: {

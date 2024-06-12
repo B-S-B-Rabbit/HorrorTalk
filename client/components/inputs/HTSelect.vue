@@ -1,7 +1,7 @@
 <template>
   <q-select
-    borderless
     :model-value="modelValue"
+    borderless
     use-input
     hide-selected
     fill-input
@@ -16,7 +16,6 @@
     input-style="padding-left: 20px"
     popup-content-style="text-align: center; font-size: 16px"
     placeholder="Ваш текст"
-    @filter="filterFn"
     @input-value="setModel"
     @update:model-value="selectItems"
   >
@@ -53,12 +52,15 @@ function filterFn(val: string, update: Function) {
     );
   });
 }
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "input-change", "selectItem"]);
 function selectItems(item: string) {
+  console.log("selectedItem", item);
   emits("update:modelValue", item);
+  emits("selectItem", item.value);
 }
 function setModel(val: string) {
   model.value = val;
+  emits("input-change", val);
 }
 onMounted(() => {
   stringOptions.value = props.options;
