@@ -4,7 +4,8 @@ export default defineEventHandler(async (event) => {
   return new Promise((resolve, reject) => {
     const apiConfig = useRuntimeConfig();
     const query = getQuery(event);
-    const targetUrl = `${apiConfig.tmdbUrl}/${apiConfig.tmdbApiVer}/discover/movie?include_adult=true&with_genres=27&page=${query.page}`;
+    console.log(query);
+    const targetUrl = `${apiConfig.tmdbUrl}/${apiConfig.tmdbApiVer}/discover/movie?include_adult=true&with_genres=27&sort_by=${query.sortOption}.${query.sortDir}&page=${query.page}&vote_count.gte=100`;
     const proxyUrl = `http://${apiConfig.proxyUrl}:${apiConfig.proxyPort}`;
     const agent = new HttpsProxyAgent(proxyUrl);
     const requestOptions = {

@@ -18,6 +18,23 @@
         </template>
       </HTInputMain>
     </div>
+    <div>
+      <HTButtonDropdown
+        v-model="isFocusedSort"
+        class="sort-button"
+        :list-items="sortVariants"
+        :multiple="false"
+        hide-counting
+        label="Сортировать"
+        :icon="mdiSort"
+        @choose-item="
+          (item) => {
+            updateSelected(item, sortVariants);
+          }
+        "
+      >
+      </HTButtonDropdown>
+    </div>
     <div v-if="loading">
       <FilmCard
         v-for="i in films.length"
@@ -37,16 +54,44 @@
 <script setup lang="ts">
 import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import FilmCard from "~/components/films/FilmCard.vue";
-import { mdiMagnify } from "@quasar/extras/mdi-v6";
+import { mdiMagnify, mdiSort } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");
 const films = ref([]);
 const responseFilms = ref([]);
 const router = useRouter();
 const currentFilmsPage = ref(1);
 const loading = ref(false);
-async function getFilms(load = false) {
+const sortDirection = ref("desc");
+const isFocusedSort = ref("");
+const sortVariants = ref([
+  { text: "По названию", value: "title", selected: false, key: 0 },
+  {
+    text: "По дате выхода",
+    value: "primary_release_date",
+    selected: false,
+    key: 1,
+  },
+  {
+    text: "По популярности",
+    value: "popularity",
+    selected: true,
+    key: 2,
+  },
+  { text: "По рейтингу", value: "vote_average", selected: false, key: 3 },
+  {
+    text: "По количеству оценок",
+    value: "vote_count",
+    selected: false,
+    key: 4,
+  },
+]);
+async function getFilms(load = false, sortOption = "popularity") {
   responseFilms.value = await useFetch("/api/getFilms", {
-    params: { page: currentFilmsPage.value },
+    params: {
+      page: currentFilmsPage.value,
+      sortOption: sortOption,
+      sortDir: sortDirection.value,
+    },
   });
   if (films.value) {
     if (!load) {
@@ -61,13 +106,35 @@ async function getFilms(load = false) {
     }
   }
 }
+function updateSelected(item, allItems, multiple = false) {
+  if (!multiple) {
+    allItems.forEach((itemScore) => {
+      if (itemScore.text === item.text) {
+        itemScore.selected = true;
+        console.log(selectedSortOpt);
+        getFilms(false, itemScore.value);
+      } else {
+        itemScore.selected = false;
+      }
+    });
+  } else {
+    allItems.forEach((itemScore) => {
+      if (itemScore.text === item.text) {
+        itemScore.selected = !itemScore.selected;
+      }
+    });
+  }
+}
+const selectedSortOpt = computed(
+  () => sortVariants.value.find((item) => item.selected)?.value,
+);
 onMounted(async () => {
   setTimeout(getFilms, 0);
 });
 function loadMoreFilms() {
   currentFilmsPage.value++;
   if (!searchValue.value) {
-    getFilms(true);
+    getFilms(true, selectedSortOpt.value);
   } else {
     searchFilms(true);
   }
@@ -141,6 +208,12 @@ watch(
   margin: 32px 16px 0px 16px;
   .search-icon {
     color: var(--app-black-1);
+  }
+  .sort-button {
+    height: 30px;
+    width: fit-content;
+    border-radius: 10px;
+    margin-bottom: 16px;
   }
   .input-search {
     margin-bottom: 32px;

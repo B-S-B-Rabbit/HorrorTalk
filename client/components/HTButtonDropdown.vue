@@ -99,9 +99,9 @@ function chooseItem(item: ListItem) {
   background-color: var(--app-dark-1);
   color: var(--app-white-1);
   width: 100%;
-
   .dropdown-item {
     padding: 8px;
+    padding-left: 16px;
   }
   .dropdown-item.active {
     border: 1px var(--app-red-1) solid;
