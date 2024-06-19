@@ -70,7 +70,7 @@ interface ValidationRule {
 }
 const validateLogin: ValidationRule[] = [
   {
-    rule: (value: string) => value.length > 5,
+    rule: (value: string) => value.length >= 5,
     ruleMessage: "Меньше 5 символов!",
   },
 ];
