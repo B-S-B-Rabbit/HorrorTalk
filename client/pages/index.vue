@@ -1,9 +1,14 @@
 <template>
   <div class="page-container">
-    <div class="suggest-register">
+    <div v-if="!isAuthorized || closeSuggest" class="suggest-register">
       <div class="block-title">
         Создай аккаунт, чтобы
-        <q-icon size="md" class="close-icon" :name="mdiClose"></q-icon>
+        <q-icon
+          size="md"
+          class="close-icon"
+          :name="mdiClose"
+          @click="closeSuggest = true"
+        ></q-icon>
       </div>
       <div class="block-content">
         <ul class="block-list">
@@ -112,6 +117,8 @@ import { mdiClose, mdiChevronRight } from "@quasar/extras/mdi-v6";
 import ArticleCard from "~/components/articles/ArticleCard.vue";
 const films = ref([]);
 const trendingFilms = ref([]);
+const isAuthorized = !!useState("user");
+const closeSuggest = ref(false);
 films.value = [
   {
     imageSrc: "/film_card_mock-image.webp",

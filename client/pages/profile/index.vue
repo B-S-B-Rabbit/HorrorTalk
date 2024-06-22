@@ -3,8 +3,8 @@
     <div class="account-container">
       <img class="account-image" src="/film_card_mock-image.jpg" />
       <div class="account-short">
-        <div class="account-initials">ИМЯ ФАМИЛИЯ</div>
-        <div class="account-login">@mycoolnick</div>
+        <div class="account-initials">{{ user.name }}</div>
+        <div class="account-login">{{ user.login }}</div>
       </div>
       <div class="account-detail">
         <div class="account-detail--title">
@@ -100,32 +100,37 @@ interface accointDetal {
   title: string;
   value: string;
 }
-const accountDetails = ref<accointDetal[]>([
-  {
-    title: "Имя",
-    value: "Журавль",
-  },
-  {
-    title: "Почта",
-    value: "mymail@mail.ru",
-  },
-  {
-    title: "Пароль",
-    value: "********",
-  },
-  {
-    title: "Пол",
-    value: "Женский",
-  },
-  {
-    title: "Дата рождения",
-    value: "12.02.2020",
-  },
-  {
-    title: "Фото",
-    value: "Загружено",
-  },
-]);
+const user = useState<User>("user");
+const accountDetails = ref<accointDetal[]>([]);
+onMounted(() => {
+  console.log(user);
+  accountDetails.value = [
+    {
+      title: "Имя",
+      value: user.value?.name,
+    },
+    {
+      title: "Почта",
+      value: user.value?.email,
+    },
+    {
+      title: "Пароль",
+      value: user.value?.password.replace(/./g, "*"),
+    },
+    {
+      title: "Пол",
+      value: user.value?.gender == "W" ? "Женский" : "Мужской",
+    },
+    {
+      title: "Дата рождения",
+      value: user.value?.dateOfBirth,
+    },
+    {
+      title: "Фото",
+      value: "Отсутствует",
+    },
+  ];
+});
 </script>
 
 <style scoped lang="scss">
