@@ -6,8 +6,8 @@
     :inline="inline"
     :left-label="leftLabel"
     color="primary"
-    @update:model-value="selectRadio"
     dark
+    @update:model-value="selectRadio"
   />
 </template>
 
@@ -36,5 +36,4 @@ function selectRadio(newValue) {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

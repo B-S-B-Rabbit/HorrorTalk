@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import HTInputMain from "@/components/inputs/HTInputMain.vue";
 import { mdiCalendarMonthOutline } from "@quasar/extras/mdi-v6";
-import { isValid, isAfter, isBefore } from "date-fns"; // Импортируем методы isValid и isAfter из библиотеки date-fns
+import { isValid, isAfter, isBefore } from "date-fns";
 
 const props = defineProps({
   modelValue: {
@@ -71,9 +71,8 @@ interface Rule {
   rule: (value: string) => boolean;
   ruleMessage: string;
 }
-// Опции для календаря
+const isValidDate = ref(false);
 const myLocale: object = {
-  /* начиная с воскресенья */
   days: "Воскресенье_Понедельник_Вторник_Среда_Четверг_Пятница_Суббота".split(
     "_",
   ),
@@ -83,36 +82,42 @@ const myLocale: object = {
       "_",
     ),
   monthsShort: "Янв_Фев_Мар_Апр_Май_Июн_Июл_Авг_Сен_Окт_Ноя_Дек".split("_"),
-  firstDayOfWeek: 1, // 0-6, 0 - воскресенье, 1 - понедельник, ...
+  firstDayOfWeek: 1,
   format24h: true,
   pluralDay: "дня",
 };
 
-const emit = defineEmits(["update:modelValue"]);
-function updateDate(val: string) {
-  emit("update:modelValue", val);
-}
-
-// Правило валидации даты
-// Правило валидации даты
 const validateDate: Rule[] = [
   {
     rule: (value: string) => {
-      const [day, month, year] = value.split(".").map(Number); // Разделяем строку и преобразуем компоненты в числа
-      // Проверяем, что месяц не превышает 12 и что введенная дата не больше 2017 года
+      const [day, month, year] = value.split(".").map(Number);
       if (day > 31 || month > 12 || year > 2024) {
         return false;
       }
-      const enteredDate = new Date(year, month - 1, day); // Создаем объект Date с правильным форматом
+      const enteredDate = new Date(year, month - 1, day);
       console.log(enteredDate);
-      const minDate = new Date(1920, 0, 1); // Минимальная дата (01.01.1920)
-      return (
-        isValid(enteredDate) && !isBefore(enteredDate, minDate) // Проверяем не меньше 1920 года дату с помощью date-fns
-      );
+      const minDate = new Date(1920, 0, 1);
+      return isValid(enteredDate) && !isBefore(enteredDate, minDate);
     },
     ruleMessage: "Неверная дата",
   },
 ];
+const emit = defineEmits(["update:modelValue", "validDate"]);
+function updateDate(val: string) {
+  emit("update:modelValue", val);
+}
+function onValidDate(date: string) {
+  isValidDate.value = validateDate[0].rule(date);
+  console.log(isValidDate.value);
+  emit("validDate", isValidDate.value);
+}
+onMounted(() => {
+  onValidDate(props.modelValue);
+});
+watch(
+  () => props.modelValue,
+  (newDate) => onValidDate(newDate),
+);
 </script>
 
 <style></style>

@@ -11,13 +11,13 @@
       <div class="registration-container">
         <q-form class="registration-form">
           <HTInputMain
-            v-for="(item, index) in formLabels.slice(0, 3)"
+            v-for="(item, index) in formFields.slice(0, 3)"
             :key="index"
             v-model="item.value"
             margin-text-input
             class="registration-form_input-text"
             :hint="item.hint"
-            :rules="item.validate"
+            :rules="item.rules"
             :label="item.label"
           >
           </HTInputMain>
@@ -29,6 +29,7 @@
               min-date="1920/01"
               max-date="2024/01"
               default-date="2017/01"
+              @valid-date="setDateValidity"
             >
             </HTInputDate>
           </div>
@@ -44,12 +45,12 @@
             />
           </div>
           <HTInputMain
-            v-model="formLabels[3].value"
+            v-model="formFields[3].value"
             type="password"
             class="registration-form_input-text"
-            :label="formLabels[3].label"
-            :hint="formLabels[3].hint"
-            :rules="formLabels[3].validate"
+            :label="formFields[3].label"
+            :hint="formFields[3].hint"
+            :rules="formFields[3].rules"
           >
           </HTInputMain>
         </q-form>
@@ -63,7 +64,7 @@
         <HTButton
           class="registration-button"
           label="Зарегистрироваться"
-          @click="navigateTo('/')"
+          @click="register"
         />
         <div class="text-block">
           Уже есть аккаунт?
@@ -81,22 +82,30 @@ import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import HTRadioButtons from "~/components/inputs/HTRadioButtons.vue";
 import HTInputDate from "~/components/inputs/HTInputDate.vue";
 import HTButton from "~/components/HTButton.vue";
+
 definePageMeta({
   layout: false,
 });
-const value: Ref<string> = ref("");
+
 const dateOfBirth: Ref<string> = ref("");
+const selectedGender: Ref<string> = ref("");
+
 interface ValidationRule {
   rule: (value: string) => boolean;
   ruleMessage: string;
 }
+
 interface Option {
   label: string;
   value: string;
 }
-interface FormLabel {
+
+interface FormField {
   label: string;
+  key: string;
   value: string;
+  hint?: string;
+  rules?: ValidationRule[];
 }
 
 const validateLogin: ValidationRule[] = [
@@ -105,24 +114,76 @@ const validateLogin: ValidationRule[] = [
     ruleMessage: "Меньше 5 символов!",
   },
 ];
-const formLabels: Ref<FormLabel[]> = ref([
+
+const validateEmail: ValidationRule[] = [
+  {
+    rule: (value: string) => /^\S+@\S+\.\S+$/.test(value),
+    ruleMessage: "Неверный формат почты!",
+  },
+];
+
+const validateName: ValidationRule[] = [
+  {
+    rule: (value: string) => value.length >= 2,
+    ruleMessage: "Имя слишком короткое!",
+  },
+];
+
+const validatePassword: ValidationRule[] = [
+  {
+    rule: (value: string) => !/[а-яА-ЯЁё]/.test(value),
+    ruleMessage: "Русские буквы не допускаются!",
+  },
+  {
+    rule: (value: string) => value.length >= 8,
+    ruleMessage: "Меньше 8 символов!",
+  },
+  {
+    rule: (value: string) => /[A-Z]/.test(value),
+    ruleMessage: "Нет заглавной буквы!",
+  },
+  {
+    rule: (value: string) => /[a-z]/.test(value),
+    ruleMessage: "Нет строчной буквы!",
+  },
+  {
+    rule: (value: string) => /\d/.test(value),
+    ruleMessage: "Нет цифр!",
+  },
+  {
+    rule: (value: string) => /[!@#$%^&*]/.test(value),
+    ruleMessage: "Нет символов !@#$%^&*",
+  },
+];
+
+const formFields: Ref<FormField[]> = ref([
   {
     label: "Логин",
+    key: "login",
     value: "",
-    validate: validateLogin,
+    rules: validateLogin,
     hint: "Больше 5 символов",
   },
   {
     label: "Почта",
+    key: "email",
     value: "",
+    rules: validateEmail,
+    hint: "example@mail.com",
   },
   {
     label: "Имя",
+    key: "name",
     value: "",
+    rules: validateName,
+    hint: "Ваше имя",
   },
   {
     label: "Пароль",
+    key: "password",
     value: "",
+    rules: validatePassword,
+    hint: "Латинница, цифры, спец.символы",
   },
 ]);
 
@@ -136,8 +197,52 @@ const options: Option[] = [
     value: "W",
   },
 ];
-const selectedGender: Ref<string> = ref("");
+const isDateValid = ref(false);
+function setDateValidity(status: boolean) {
+  isDateValid.value = status;
+}
+function validateField(value: string, rules?: ValidationRule[]): boolean {
+  if (!rules) return true;
+  return rules.every((rule) => rule.rule(value));
+}
+
+function validateForm(): boolean {
+  return (
+    formFields.value.every((field) =>
+      validateField(field.value, field.rules),
+    ) &&
+    isDateValid.value &&
+    !!selectedGender.value
+  );
+}
+
+async function register() {
+  if (validateForm()) {
+    const response = await useFetch("/api/sessions/getGuestSession");
+    const result: GuestSessionToken = JSON.parse(response.data.value as string);
+    useSetToken(result);
+    const user: User = {
+      login: "",
+      password: "",
+      dateOfBirth: "",
+      gender: "",
+      name: "",
+      email: "",
+    };
+    formFields.value.forEach((item) => {
+      user[item.key as keyof User] = item.value;
+    });
+    user.dateOfBirth = dateOfBirth.value;
+    user.gender = selectedGender.value;
+    useSetUser(user);
+    useUserSet(user, true);
+    navigateTo("/");
+  } else {
+    console.log("Validation failed");
+  }
+}
 </script>
+
 <style scoped lang="scss">
 .link {
   color: var(--app-blue-2);
