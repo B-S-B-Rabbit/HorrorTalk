@@ -52,20 +52,16 @@ const proxyPort = 3128;
 const imageLoading = ref(false);
 const imageUrl = ref("");
 onMounted(() => {
-  setTimeout(
-    () =>
-      fetch(`/api/getImage/${encodeURIComponent(props.filmItem.poster_path)}`)
-        .then((response) => response.text())
-        .then((imageDataBase64) => {
-          imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
-          console.log("wtf");
-          imageLoading.value = true;
-        })
-        .catch((error) => {
-          console.error("Ошибка при загрузке изображения:", error);
-        }),
-    100 * props.pos,
-  );
+  fetch(`/api/getImage/${encodeURIComponent(props.filmItem.poster_path)}`)
+    .then((response) => response.text())
+    .then((imageDataBase64) => {
+      imageUrl.value = "data:image/jpeg;base64," + imageDataBase64;
+      console.log("wtf");
+      imageLoading.value = true;
+    })
+    .catch((error) => {
+      console.error("Ошибка при загрузке изображения:", error);
+    });
 });
 
 watch(
