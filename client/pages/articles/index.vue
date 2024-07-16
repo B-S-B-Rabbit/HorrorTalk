@@ -53,7 +53,6 @@
 </template>
 
 <script setup lang="ts">
-import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import ArticleCard from "~/components/articles/ArticleCard.vue";
 import { mdiMagnify, mdiPlus, mdiSort } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");

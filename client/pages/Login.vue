@@ -1,75 +1,72 @@
 <template>
-  <div class="main-container">
+  <div class="page-container">
     <div class="registration-wrapper">
-      <div class="registration-wrapper_logo">
-        <img
-          class="registration-wrapper-img"
-          src="public/icons/logo.svg"
-          alt="Logo"
-        />
+      <div class="registration-logo">
+        <img src="public/icons/logo.svg" alt="Logo" />
       </div>
-      <div class="registration-container">
-        <q-form class="registration-form">
-          <HTInputMain
-            v-model="authDataRef.login"
-            margin-text-input
-            class="registration-form_input-text"
-            hint="Больше 5 символов"
-            :rules="validateLogin"
-            label="Логин"
-          >
-          </HTInputMain>
-          <HTInputMain
-            v-model="authDataRef.password"
-            type="password"
-            class="registration-form_input-text"
-            label="Пароль"
-            hint="Латинница, цифры, спец.символы"
-            :rules="validatePassword"
-          >
-          </HTInputMain>
-        </q-form>
+      <q-form class="registration-form">
+        <!--            margin-text-input что это-->
+        <HTInput
+          v-model="authData.login"
+          margin-text-input
+          class="registration-form__input"
+          hint="Больше 2 символов"
+          :rules="validateLogin"
+          label="Логин"
+        >
+        </HTInput>
+        <HTInput
+          v-model="authData.password"
+          type="password"
+          class="registration-form__input"
+          label="Пароль"
+          hint="Латинница, цифры, спец.символы"
+          :rules="validatePassword"
+        >
+        </HTInput>
+      </q-form>
+    </div>
+    <div class="register-buttons-container">
+      <div class="register-buttons-container__text-block">
+        <a class="link">Забыли пароль?</a>
       </div>
-      <div class="register-block">
-        <div class="text-block">
-          <a class="link">Забыли пароль?</a>
-        </div>
-        <HTButton class="registration-button" label="Войти" @click="login" />
-        <div class="text-block">
-          Еще нет аккаунта?
-          <nuxt-link to="/registration" class="link"
-            >Зарегистрироваться</nuxt-link
-          >
-        </div>
+      <HTButton
+        class="register-buttons-container__button"
+        label="Войти"
+        @click="login"
+      />
+      <div class="register-buttons-container__text-block">
+        Еще нет аккаунта?
+        <nuxt-link to="/registration" class="link"
+          >Зарегистрироваться</nuxt-link
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import HTInputMain from "~/components/inputs/HTInputMain.vue";
-import HTButton from "~/components/HTButton.vue";
-import type { Ref } from "vue";
-
 definePageMeta({
   layout: false,
 });
 
-interface AuthDataType {
+interface AuthData {
   login: string;
   password: string;
 }
-
 interface ValidationRule {
   rule: (value: string) => boolean;
   ruleMessage: string;
 }
 
+const authData = ref<AuthData>({
+  login: "",
+  password: "",
+});
 const validateLogin: ValidationRule[] = [
   {
-    rule: (value: string) => value.length >= 5,
-    ruleMessage: "Меньше 5 символов!",
+    rule: (value: string) => value.length >= 2,
+    ruleMessage: "Меньше 2 символов!",
   },
 ];
 
@@ -99,26 +96,26 @@ const validatePassword: ValidationRule[] = [
     ruleMessage: "Нет символов !@#$%^&*",
   },
 ];
-
-function validateForm(): boolean {
+//продумать реализацию валидации на стороне формы
+function isRulesPassed(): boolean {
   const loginValid = validateLogin.every((rule) =>
-    rule.rule(authDataRef.value.login),
+    rule.rule(authData.value.login),
   );
   const passwordValid = validatePassword.every((rule) =>
-    rule.rule(authDataRef.value.password),
+    rule.rule(authData.value.password),
   );
   return loginValid && passwordValid;
 }
-
+//реализовать через апи сервера
 async function login() {
-  if (validateForm()) {
+  if (isRulesPassed()) {
     const user = useGetUser();
     if (!user) {
-      alert("Возможно, вы не зарегистрированы");
+      alert("Возможно, вы не зарегистрированы"); //реализовать через компонент HTAlert
     } else {
       if (
-        user.login == authDataRef.value.login &&
-        user.password == authDataRef.value.password
+        user.login == authData.value.login &&
+        user.password == authData.value.password
       ) {
         console.log("Login successful");
         useUserSet(user, true);
@@ -136,11 +133,6 @@ async function login() {
     console.log("Validation failed");
   }
 }
-
-const authDataRef: Ref<AuthDataType> = ref({
-  login: "",
-  password: "",
-});
 </script>
 
 <style lang="scss">
@@ -148,24 +140,19 @@ const authDataRef: Ref<AuthDataType> = ref({
   color: var(--app-blue-2);
   text-decoration: none;
 }
-.main-container {
+.page-container {
   width: 100vw;
   height: 100vh;
   padding: 0 5%;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   .registration-wrapper {
-    margin: auto;
-    .registration-button {
-      margin: 24px 0px;
-    }
-    .text-block {
-      color: var(--app-black-4);
-      text-align: center;
-      &:last-child {
-        margin-bottom: 32px;
-      }
-    }
-    &_logo {
+    margin: 0 32px;
+    display: flex;
+    flex-direction: column;
+    .registration-logo {
       height: auto;
       width: 100%;
       text-align: center;
@@ -175,17 +162,25 @@ const authDataRef: Ref<AuthDataType> = ref({
         height: 259px;
       }
     }
-    .registration-container {
-      margin: 0 32px;
-      display: flex;
-      flex-direction: column;
-      .registration-form {
-        &_input-text {
-          margin-bottom: 16px;
-          &:last-child {
-            margin-bottom: 32px;
-          }
+    .registration-form {
+      &__input {
+        margin-bottom: 16px;
+        &:last-child {
+          margin-bottom: 32px;
         }
+      }
+    }
+  }
+  .register-buttons-container {
+    width: 100%;
+    &__button {
+      margin: 24px 0px;
+    }
+    &__text-block {
+      color: var(--app-black-4);
+      text-align: center;
+      &:last-child {
+        margin-bottom: 32px;
       }
     }
   }

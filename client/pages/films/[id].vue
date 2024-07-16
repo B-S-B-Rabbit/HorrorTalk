@@ -271,7 +271,6 @@ import {
   mdiArrowTopRight,
   mdiSend,
 } from "@quasar/extras/mdi-v7";
-import { useRoute } from "vue-router";
 import { format } from "date-fns";
 import YouTube from "vue3-youtube";
 const route = useRoute();

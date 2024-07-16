@@ -57,9 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import HTInputMain from "~/components/inputs/HTInputMain.vue";
-import HTButton from "~/components/HTButton.vue";
 import { mdiUpload, mdiDeleteOutline } from "@quasar/extras/mdi-v6";
 
 interface accointDetal {

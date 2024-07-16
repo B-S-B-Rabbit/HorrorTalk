@@ -1,5 +1,5 @@
 <template>
-  <HTInputMain
+  <HTInput
     :input-style="`width: 100px; text-align: center; color: ${themed ? 'var(--app-white-1)' : ''}`"
     type="text"
     mask="##.##.####"
@@ -33,11 +33,10 @@
         </q-popup-proxy>
       </q-icon>
     </template>
-  </HTInputMain>
+  </HTInput>
 </template>
 
 <script lang="ts" setup>
-import HTInputMain from "@/components/inputs/HTInputMain.vue";
 import { mdiCalendarMonthOutline } from "@quasar/extras/mdi-v6";
 import { isValid, isAfter, isBefore } from "date-fns";
 

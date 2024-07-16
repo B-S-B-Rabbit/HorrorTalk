@@ -52,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import HTInputMain from "~/components/inputs/HTInputMain.vue";
 import FilmCard from "~/components/films/FilmCard.vue";
 import { mdiMagnify, mdiSort } from "@quasar/extras/mdi-v6";
 const searchValue = ref("");
